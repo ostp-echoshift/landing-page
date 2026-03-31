@@ -1,0 +1,81 @@
+﻿/* tokens.css - OSTP @echoShift Design System - Nivel B */
+:root {
+    /* MARCA */
+    --ostp-primary:     #2E91CF;
+    --ostp-deep:        #0A507C;
+    --ostp-accent:      #715BD8;
+    --ostp-text-acc:    #97A0E5;
+    --cyan:             #00C8A0;
+    --cyan-dim:         #007F65;
+    --cyan-glow:        rgba(0,200,160,0.15);
+    --accent-orange:    #FF6B35;
+    /* FONDOS */
+    --bg-page:          #060810;
+    --bg-2:             #0B0F1A;
+    --bg-3:             #10152A;
+    --bg-4:             #141824;
+    --bg-header:        #0D1F35;
+    --bg-surface:       rgba(255,255,255,0.04);
+    --bg-surface-hover: rgba(255,255,255,0.07);
+    --bg-card:          rgba(255,255,255,0.03);
+    /* TEXTO */
+    --text-primary:     #F0F4FF;
+    --text-muted:       #6B7280;
+    --text-muted-2:     #9CA3AF;
+    /* TIPOGRAFIA */
+    --font-display:     Fraunces, serif;
+    --font-ui:          Syne, sans-serif;
+    --font-body:        DM Sans, sans-serif;
+    --font-mono:        JetBrains Mono, monospace;
+    /* ESCALA */
+    --text-xs:   0.75rem;
+    --text-sm:   0.82rem;
+    --text-base: 1rem;
+    --text-lg:   1.125rem;
+    --text-xl:   1.25rem;
+    --text-2xl:  1.5rem;
+    --text-3xl:  2rem;
+    --text-4xl:  2.75rem;
+    --text-5xl:  3.75rem;
+    --text-hero: clamp(3rem, 7vw, 5.5rem);
+    /* ESPACIADO */
+    --space-1:  4px;
+    --space-2:  8px;
+    --space-3:  12px;
+    --space-4:  16px;
+    --space-6:  24px;
+    --space-8:  32px;
+    --space-10: 40px;
+    --space-12: 48px;
+    --space-16: 64px;
+    --space-20: 80px;
+    --space-24: 96px;
+    --space-32: 128px;
+    /* LAYOUT */
+    --max-w:       1200px;
+    --max-w-text:  680px;
+    --pad-section: clamp(64px, 10vw, 120px);
+    --pad-page:    clamp(20px, 5vw, 64px);
+    /* BORDES */
+    --radius-sm:    4px;
+    --radius-card:  12px;
+    --radius-lg:    20px;
+    --radius-pill:  100px;
+    --border-glass: 1px solid rgba(255,255,255,0.07);
+    --border-cyan:  1px solid rgba(0,200,160,0.25);
+    /* EFECTOS */
+    --blur-glass:      blur(16px);
+    --blur-heavy:      blur(40px);
+    --shadow-card:     0 4px 24px rgba(0,0,0,0.4);
+    --shadow-glow:     0 0 40px rgba(46,145,207,0.2);
+    --shadow-cyan:     0 6px 28px rgba(0,200,160,0.3);
+    --transition:      0.3s ease;
+    --transition-slow: 0.6s ease;
+    /* Z-INDEX */
+    --z-base:   1;
+    --z-card:   10;
+    --z-nav:    200;
+    --z-wa:     500;
+    --z-cursor: 9999;
+}
+/* BREAKPOINTS: --bp-sm:560px --bp-md:768px --bp-lg:1024px --bp-xl:1200px */

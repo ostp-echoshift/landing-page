@@ -1,0 +1,124 @@
+﻿/* sections.css - OSTP @echoShift - Nivel C */
+
+section { padding: var(--pad-section) 0; position: relative; }
+
+/* SERVICIOS */
+.section-services { background: var(--bg-2); }
+.grid-services {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-6);
+}
+
+/* STATS */
+.section-stats {
+    background: var(--bg-page);
+    border-top: var(--border-glass);
+    border-bottom: var(--border-glass);
+}
+.grid-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1px;
+    background: rgba(255,255,255,0.07);
+}
+.grid-stats .card-stat { background: var(--bg-page); }
+
+/* METODOLOGIA */
+.section-method { background: var(--bg-3); }
+.method-steps { display: grid; gap: var(--space-4); }
+.method-step {
+    display: grid; grid-template-columns: 56px 1fr;
+    gap: var(--space-6); align-items: start;
+    padding: var(--space-6) 0;
+    border-bottom: var(--border-glass);
+}
+.method-step-letter {
+    width: 48px; height: 48px;
+    border: var(--border-cyan); border-radius: var(--radius-sm);
+    display: grid; place-items: center;
+    font-family: var(--font-mono); font-size: var(--text-lg);
+    color: var(--cyan); font-weight: 700;
+}
+.method-step-title {
+    font-family: var(--font-ui); font-weight: 700; font-size: var(--text-xl);
+    margin-bottom: var(--space-2);
+}
+.method-step-desc { color: var(--text-muted-2); font-size: var(--text-base); }
+
+/* PROYECTOS */
+.section-projects { background: var(--bg-2); }
+.grid-projects {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: var(--space-6);
+}
+.card-project .project-tag {
+    font-family: var(--font-mono); font-size: var(--text-xs);
+    color: var(--cyan); letter-spacing: 0.08em; text-transform: uppercase;
+    margin-bottom: var(--space-3); display: block;
+}
+.card-project .project-status {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: var(--text-xs); color: var(--text-muted); margin-top: var(--space-4);
+}
+.card-project .project-status::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--cyan);
+}
+
+/* FAQ */
+.section-faq { background: var(--bg-page); }
+.faq-item { border-bottom: var(--border-glass); overflow: hidden; }
+.faq-q {
+    width: 100%; display: flex; justify-content: space-between; align-items: center;
+    padding: var(--space-6) 0;
+    font-family: var(--font-ui); font-weight: 600; font-size: var(--text-lg);
+    color: var(--text-primary); text-align: left;
+    transition: color var(--transition);
+}
+.faq-q:hover { color: var(--cyan); }
+.faq-icon { font-size: 20px; transition: transform var(--transition); color: var(--cyan); }
+.faq-item.open .faq-icon { transform: rotate(45deg); }
+.faq-a {
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.4s ease, padding var(--transition);
+    color: var(--text-muted-2); line-height: 1.7;
+}
+.faq-item.open .faq-a { max-height: 300px; padding-bottom: var(--space-6); }
+
+/* CONTACTO */
+.section-contact { background: var(--bg-3); text-align: center; }
+.contact-headline {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: var(--text-4xl); margin-bottom: var(--space-4);
+}
+.contact-sub { color: var(--text-muted-2); font-size: var(--text-lg); margin-bottom: var(--space-10); }
+.contact-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+/* FOOTER */
+.footer {
+    background: var(--bg-header);
+    border-top: var(--border-glass);
+    padding: var(--space-12) 0 var(--space-8);
+}
+.footer-top {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-bottom: var(--space-8); border-bottom: var(--border-glass);
+    margin-bottom: var(--space-8);
+}
+.footer-nav { display: flex; gap: 32px; }
+.footer-nav a {
+    color: var(--text-muted); font-size: var(--text-sm);
+    transition: color var(--transition);
+}
+.footer-nav a:hover { color: var(--cyan); }
+.footer-bottom { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+.footer-copy, .footer-stack { font-size: var(--text-xs); color: var(--text-muted); letter-spacing: 0.04em; }
+
+@media (max-width: 768px) {
+    .footer-top { flex-direction: column; gap: var(--space-6); text-align: center; }
+    .footer-nav { flex-wrap: wrap; justify-content: center; gap: 20px; }
+    .footer-bottom { flex-direction: column; text-align: center; }
+    .contact-actions { flex-direction: column; align-items: center; }
+    .grid-projects { grid-template-columns: 1fr; }
+}
