@@ -1,0 +1,103 @@
+/* =============================================================================
+   03-layouts.css — Layouts y grids específicos
+   Estructuras de página, grids responsivos, contenedores
+   ============================================================================= */
+
+.dim-card-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--sp-xl) var(--sp-lg) var(--sp-lg);
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.dim-content-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--sp-lg);
+  margin-bottom: var(--sp-xl);
+}
+
+.dim-section {
+  background: var(--ostp-bg-alt);
+  border: 1px solid var(--ostp-border);
+  border-radius: var(--radius-md);
+  padding: var(--sp-md);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.dim-section:hover {
+  border-color: var(--ostp-border-hover);
+  box-shadow: 0 8px 32px var(--ostp-cyan-dim);
+}
+
+.dim-section-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ostp-cyan);
+  margin-bottom: var(--sp-sm);
+}
+
+.dim-section--highlight {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-md);
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--sp-2xl) var(--sp-md);
+  min-height: 60vh;
+}
+
+.hero__title {
+  font-size: clamp(2.5rem, 8vw, 5rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  margin-bottom: var(--sp-md);
+}
+
+.hero__subtitle {
+  font-size: 1.2rem;
+  color: var(--ostp-text-muted);
+  max-width: 60ch;
+  margin-bottom: var(--sp-lg);
+}
+
+.hero__actions {
+  display: flex;
+  gap: var(--sp-md);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--sp-lg);
+  padding: var(--sp-lg) 0;
+}
+
+@media (max-width: 768px) {
+  .dim-content-grid { grid-template-columns: 1fr; }
+  .dim-section--highlight { grid-template-columns: 1fr; }
+  .hero { padding: var(--sp-xl) var(--sp-md); min-height: 40vh; }
+  .hero__title { font-size: clamp(2rem, 6vw, 3.5rem); }
+  .catalog-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .dim-card-container { padding: var(--sp-lg) var(--sp-md) var(--sp-lg); }
+  .hero__actions { flex-direction: column; align-items: center; width: 100%; }
+  .hero__actions .btn { width: 100%; justify-content: center; }
+}

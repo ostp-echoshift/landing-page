@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Catálogo OSTP @echoShift: 8 dimensiones de servicios digitales. Desarrollo Web, Embudos, Automatización, Branding, POS, Apps, Consultoría e Infraestructura.">
+  <meta name="theme-color" content="#00f0ff">
+  <title>OSTP @echoShift | Catálogo de Servicios</title>
+  
+  <!-- Fuentes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  
+  <!-- Estilos -->
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <!-- Favicon -->
+  <link rel="icon" href="assets/icon/logo-ostp-hex.svg" type="image/png">
+  
+  <style>
+    /* ===== AMORPHOUS GRAPH ===== */
+    #amorphous-graph {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+    
+    /* Asegurar que el contenido esté por encima del canvas */
+    .hero, .contact-wrap, .pay-wrap, .thanks-container, 
+    .form-container, .error-container, .catalog-hero, 
+    .catalog-grid, .catalog-guarantee, .catalog-cta,
+    .section, .stats-section, .footer-grid {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ===== CATALOG-SPECIFIC STYLES ===== */
+    :root {
+      --catalog-gap: 24px;
+      --catalog-card-min: 280px;
+      --catalog-card-max: 1fr;
+    }
+    
+    body {
+      background: var(--ostp-bg);
+      color: var(--ostp-text);
+      overflow-x: hidden;
+    }
+    
+    /* Header minimal */
+    .catalog-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(6, 6, 10, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--ostp-border);
+    }
+    
+    .header-logo {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.1rem;
+      color: var(--ostp-cyan);
+      letter-spacing: 0.15em;
+      text-decoration: none;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .header-logo svg {
+      width: 24px;
+      height: 24px;
+    }
+    
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    
+    .btn-outline {
+      font-size: 0.8rem;
+      color: var(--ostp-text-muted);
+      text-decoration: none;
+      padding: 6px 14px;
+      border: 1px solid var(--ostp-border);
+      border-radius: 20px;
+      transition: all 0.2s;
+      background: transparent;
+    }
+    
+    .btn-outline:hover {
+      color: var(--ostp-cyan);
+      border-color: var(--ostp-cyan);
+      background: var(--ostp-cyan-dim);
+    }
+    
+    .btn-primary-sm {
+      font-size: 0.8rem;
+      padding: 6px 16px;
+      background: var(--ostp-cyan);
+      color: var(--ostp-bg);
+      border: none;
+      border-radius: 20px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    
+    .btn-primary-sm:hover {
+      box-shadow: 0 0 16px var(--ostp-cyan-dim);
+      transform: translateY(-1px);
+    }
+    
+    /* Hero section */
+    .catalog-hero {
+      padding: 64px 24px 48px;
+      text-align: center;
+      background: radial-gradient(ellipse at top, rgba(0, 240, 255, 0.08), transparent 60%);
+      border-bottom: 1px solid var(--ostp-border);
+    }
+    
+    .catalog-hero h1 {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      color: var(--ostp-cyan);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+    }
+    
+    .catalog-hero p {
+      font-size: 1.1rem;
+      color: var(--ostp-text-muted);
+      max-width: 680px;
+      margin: 0 auto 24px;
+      line-height: 1.6;
+    }
+    
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      flex-wrap: wrap;
+      margin-top: 32px;
+    }
+    
+    .stat-item {
+      text-align: center;
+    }
+    
+    .stat-value {
+      display: block;
+      font-family: 'Orbitron', monospace;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--ostp-cyan);
+    }
+    
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--ostp-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    
+    /* Filter bar */
+    .catalog-filters {
+      position: sticky;
+      top: 64px;
+      z-index: 90;
+      padding: 12px 24px;
+      background: rgba(6, 6, 10, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--ostp-border);
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    
+    .filter-btn {
+      font-size: 0.75rem;
+      padding: 6px 14px;
+      background: transparent;
+      border: 1px solid var(--ostp-border);
+      border-radius: 20px;
+      color: var(--ostp-text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    
+    .filter-btn:hover,
+    .filter-btn.active {
+      color: var(--ostp-cyan);
+      border-color: var(--ostp-cyan);
+      background: var(--ostp-cyan-dim);
+    }
+    
+    /* Grid de servicios */
+    .catalog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(var(--catalog-card-min), var(--catalog-card-max)));
+      gap: var(--catalog-gap);
+      padding: 32px 24px 64px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    
+    /* Service card */
+    .service-card {
+      background: var(--ostp-bg-alt);
+      border: 1px solid var(--ostp-border);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s var(--ease-out);
+      position: relative;
+    }
+    
+    .service-card:hover {
+      border-color: var(--ostp-border-hover);
+      box-shadow: 0 16px 48px rgba(0, 240, 255, 0.12);
+      transform: translateY(-4px);
+    }
+    
+    .service-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent 60%, rgba(0, 240, 255, 0.04));
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    
+    .service-card:hover::before {
+      opacity: 1;
+    }
+    
+    .card-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--ostp-border);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    
+    .dim-badge {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ostp-cyan);
+      background: rgba(0, 240, 255, 0.12);
+      padding: 4px 10px;
+      border-radius: 12px;
+      flex-shrink: 0;
+    }
+    
+    .card-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.3;
+      margin: 0;
+    }
+    
+    .card-subtitle {
+      font-size: 0.9rem;
+      color: var(--ostp-text-muted);
+      margin: 8px 0 0;
+      line-height: 1.5;
+    }
+    
+    .card-media {
+      position: relative;
+      height: 160px;
+      background: linear-gradient(135deg, var(--ostp-bg), var(--ostp-bg-alt));
+      overflow: hidden;
+    }
+    
+    .card-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    
+    .service-card:hover .card-video {
+      opacity: 0.6;
+    }
+    
+    .card-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: opacity 0.3s;
+    }
+    
+    .service-card:hover .card-img {
+      opacity: 0.15;
+    }
+    
+    .card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 40%, rgba(6, 6, 10, 0.9) 100%);
+      z-index: 1;
+    }
+    
+    .card-body {
+      padding: 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .feature-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.9rem;
+      color: var(--ostp-text);
+    }
+    
+    .feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    
+    .feature-check {
+      color: var(--ostp-cyan);
+      font-weight: bold;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    
+    .card-footer {
+      padding: 16px 20px 20px;
+      border-top: 1px solid var(--ostp-border);
+      background: rgba(6, 6, 10, 0.4);
+    }
+    
+    .pricing-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    
+    .price-label {
+      font-size: 0.75rem;
+      color: var(--ostp-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    
+    .price-value {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--ostp-cyan);
+    }
+    
+    .delivery-badge {
+      font-size: 0.75rem;
+      color: var(--ostp-text);
+      background: var(--ostp-purple);
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-weight: 500;
+    }
+    
+    .card-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 10px 16px;
+      background: transparent;
+      border: 2px solid var(--ostp-cyan);
+      color: var(--ostp-cyan);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 10px;
+      transition: all 0.2s;
+    }
+    
+    .card-cta:hover {
+      background: var(--ostp-cyan);
+      color: var(--ostp-bg);
+      box-shadow: 0 0 24px var(--ostp-cyan-dim);
+    }
+    
+    .card-cta svg {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      flex-shrink: 0;
+    }
+    
+    /* Guarantee banner */
+    .catalog-guarantee {
+      padding: 24px;
+      background: linear-gradient(135deg, rgba(123, 46, 218, 0.12), transparent);
+      border-top: 1px solid var(--ostp-border);
+      border-bottom: 1px solid var(--ostp-border);
+      text-align: center;
+    }
+    
+    .guarantee-text {
+      font-size: 0.95rem;
+      color: var(--ostp-text);
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    
+    .guarantee-text strong {
+      color: var(--ostp-cyan);
+    }
+    
+    /* CTA final */
+    .catalog-cta {
+      padding: 48px 24px 64px;
+      text-align: center;
+      background: radial-gradient(ellipse at bottom, rgba(123, 46, 218, 0.08), transparent 60%);
+    }
+    
+    .catalog-cta h2 {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      color: #fff;
+      margin-bottom: 12px;
+    }
+    
+    .catalog-cta p {
+      color: var(--ostp-text-muted);
+      margin-bottom: 24px;
+      max-width: 560px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .cta-group {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    
+    .btn-lg {
+      padding: 14px 32px;
+      font-size: 0.95rem;
+    }
+    
+    .btn-secondary {
+      background: transparent;
+      border: 2px solid var(--ostp-border);
+      color: var(--ostp-text);
+    }
+    
+    .btn-secondary:hover {
+      border-color: var(--ostp-cyan);
+      color: var(--ostp-cyan);
+    }
+    
+    /* Footer */
+    .catalog-footer {
+      padding: 24px;
+      background: var(--ostp-bg-alt);
+      border-top: 1px solid var(--ostp-border);
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--ostp-text-muted);
+    }
+    
+    .catalog-footer a {
+      color: var(--ostp-cyan);
+      text-decoration: none;
+    }
+    
+    .catalog-footer a:hover {
+      text-decoration: underline;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .catalog-hero { padding: 48px 16px 32px; }
+      .catalog-filters { top: 56px; padding: 10px 16px; }
+      .catalog-grid { padding: 24px 16px 48px; gap: 16px; }
+      .card-header { padding: 16px; }
+      .card-body { padding: 16px; }
+      .card-footer { padding: 12px 16px 16px; }
+      .catalog-guarantee { padding: 20px 16px; }
+      .catalog-cta { padding: 32px 16px 48px; }
+      .cta-group { flex-direction: column; align-items: center; }
+      .btn-lg { width: 100%; max-width: 320px; }
+    }
+    
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+      .service-card { transition: none !important; }
+    }
+    
+    /* Animaciones de entrada */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .service-card {
+      animation: fadeInUp 0.5s var(--ease-out) backwards;
+    }
+    
+    .service-card:nth-child(1) { animation-delay: 0.05s; }
+    .service-card:nth-child(2) { animation-delay: 0.1s; }
+    .service-card:nth-child(3) { animation-delay: 0.15s; }
+    .service-card:nth-child(4) { animation-delay: 0.2s; }
+    .service-card:nth-child(5) { animation-delay: 0.25s; }
+    .service-card:nth-child(6) { animation-delay: 0.3s; }
+    .service-card:nth-child(7) { animation-delay: 0.35s; }
+    .service-card:nth-child(8) { animation-delay: 0.4s; }
+  </style>
+</head>
+<body>
+  <!-- ===== AMORPHOUS GRAPH (FONDO DE PARTICULAS) ===== -->
+  <canvas id="amorphous-graph"></canvas>
+
+
+  <!-- HEADER -->
+  <header class="catalog-header">
+    <a href="index.html" class="header-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 6v6l4 2"/>
+      </svg>
+      OSTP<span style="color:var(--ostp-text-muted)">@echoShift</span>
+    </a>
+    <div class="header-actions">
+      <a href="index.html" class="btn-outline">← Explorar</a>
+      <a href="index.html" class="btn-primary-sm">Agendar diagnóstico</a>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="catalog-hero">
+    <h1>Catálogo de Servicios</h1>
+    <p>8 dimensiones de soluciones digitales diseñadas para escalar tu operación con metodología OSTP probada.</p>
+    
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-value">8</span>
+        <span class="stat-label">Dimensiones</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">100%</span>
+        <span class="stat-label">Personalizable</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">48h</span>
+        <span class="stat-label">Respuesta</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- FILTERS (opcional, para futura expansión) -->
+  <nav class="catalog-filters" aria-label="Filtrar servicios">
+    <button class="filter-btn active" data-filter="all">Todos</button>
+    <button class="filter-btn" data-filter="web">Web & Apps</button>
+    <button class="filter-btn" data-filter="marketing">Marketing</button>
+    <button class="filter-btn" data-filter="ops">Operaciones</button>
+    <button class="filter-btn" data-filter="infra">Infraestructura</button>
+  </nav>
+
+  <!-- GRID DE SERVICIOS -->
+  <main class="catalog-grid" id="catalogGrid">
+    
+    <!-- DIM 01 -->
+    <article class="service-card" data-category="web">
+      <div class="card-header">
+        <span class="dim-badge">DIM 01</span>
+        <h3 class="card-title">Desarrollo Web</h3>
+      </div>
+      <p class="card-subtitle">Sitios, portales y sistemas digitales con identidad propia y alto impacto.</p>
+      <div class="card-media">
+        <video class="card-video" muted loop playsinline preload="none" data-src="assets/clip/OSTP-DIM01.mp4">
+          <source src="" type="video/mp4">
+        </video>
+        <img class="card-img" src="assets/img/OSTP-DIM01.png" alt="Desarrollo Web" onerror="this.style.background='linear-gradient(135deg,#0a0a12,#06060a)'">
+        <div class="card-overlay"></div>
+      </div>
+      <div class="card-body">
+        <ul class="feature-list">
+          <li class="feature-item"><span class="feature-check">✓</span> GitHub Pages + dominio personalizado</li>
+          <li class="feature-item"><span class="feature-check">✓</span> Diseño 100% responsivo</li>
+          <li class="feature-item"><span class="feature-check">✓</span> SSL incluido + SEO básico</li>
+        </ul>
+      </div>
+      <div class="card-footer">
+        <div class="pricing-row">
+          <span class="price-label">Inversión</span>
+          <span class="price-value">$4,500 MXN</span>
+        </div>
+        <div class="pricing-row">
+          <span class="price-label">Entrega</span>
+          <span class="delivery-badge">2-3 semanas</span>
+        </div>
+        <a href="dim01.html" class="card-cta">
+          Ver detalles <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+      </div>
+    </article>
+    
+    <!-- DIM 02 -->
+    <article class="service-card" data-category="marketing">
+      <div class="card-header">
+        <span class="dim-badge">DIM 02</span>
+        <h3 class="card-title">Embudos de Venta</h3>
+      </div>
+      <p class="card-subtitle">Funnels de conversión optimizados que transforman visitantes en clientes.</p>
+      <div class="card-media">
+        <video class="card-video" muted loop playsinline preload="none" data-src="assets/clip/OSTP-DIM02.mp4">
+          <source src="" type="video/mp4">
+        </video>
+        <img class="card-img" src="assets/img/OSTP-DIM02.png" alt="Embudos de Venta" onerror="this.style.background='linear-gradient(135deg,#0a0a12,#06060a)'">
+        <div class="card-overlay"></div>
+      </div>
+      <div class="card-body">
+        <ul class="feature-list">
+          <li class="feature-item"><span class="feature-check">✓</span> Flujo compromiso-antes-costo</li>
+          <li class="feature-item"><span class="feature-check">✓</span> Captura de leads calificada</li>
+          <li class="feature-item"><span class="feature-check">✓</span> Automatización email/WhatsApp</li>
+        </ul>
+      </div>
+      <div class="card-footer">
+        <div class="pricing-row">
+          <span class="price-label">Inversión</span>
+          <span class="price-value">$6,000 MXN</span>
+        </div>
+        <div class="pricing-row">
+          <span class="price-label">Entrega</span>
+          <span class="delivery-badge">3-4 semanas</span>
+        </div>
+        <a href="dim02.html" class="card-cta">
+          Ver detalles <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+      </div>
+    </article>
+    
+    <!-- DIM 03 -->
+    <article class="service-card" data-category="ops">
+      <div class="card-header">
+        <span class="dim-badge">DIM 03</span>
+        <h3 class="card-title">Automatización</h3>
+      </div>
+      <p class="card-subtitle">WhatsApp bot y flujos de trabajo inteligentes que trabajan 24/7.</p>
+      <div class="card-media">
+        <video class="card-video" muted loop playsinline preload="none" data-src="assets/clip/OSTP-DIM03.mp4">
+          <source src="" type="video/mp4">
+        </video>
+        <img class="card-img" src="assets/img/OSTP-DIM03.png" alt="Automatización" onerror="this.style.background='linear-gradient(135deg,#0a0a12,#06060a)'">
+        <div class="card-overlay"></div>
+      </div>
+      <div class="card-body">
+        <ul class="feature-list">
+          <li class="feature-item"><span class="feature-check">✓</span> WhatsApp Business API</li>
+          <li class="feature-item"><span class="feature-check">✓</span> Integraciones CRM</li>
+          <li class="feature-item"><span class="feature-check">✓</span> Flujos personalizados</li>
+        </ul>
+      </div>
+      <div class="card-footer">
+        <div class="pricing-row">
+          <span class="price-label">Inversión</span>
+          <span class="price-value">$8,000 MXN</span>
+        </div>
+        <div class="pricing-row">
+          <span class="price-label">Entrega</span>
+          <span class="delivery-badge">3-5 semanas</span>
+        </div>
+        <a href="dim03.html" class="card-cta">
+          Ver detalles <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+      </div>
+    </article>
+    
+    <!-- DIM 04 -->
+    <article class="service-card" data-category="web">
+      <div class="card-header">
+        <span class="dim-badge">DIM 04</span>
+        <h3 class="card-title">Branding Digital</h3>
+      </div>
+      <p class="card-subtitle">Identidad visual completa que posiciona tu marca en el mercado digital.</p>
+      <div class="card-media">
+        <video class="card-video" muted loop playsinline preload="none" data-src="assets/clip/OSTP-DIM04.mp4">
+          <source src="" type="video/mp4">
+        </video>
+        <img class="card-img" src="assets/img/OSTP-DIM04.png" alt="Branding Digital" onerror="this.style.background='linear-gradient(135deg,#0a0a12,#06060a)'">
+        <div class="card-overlay"></div>
+      </div>
+      <div class="card-body">
+        <ul class="feature-list">
+          <li class="feature-item"><span class="feature-check">✓</span> Logo profesional (3 propuestas)</li>
+          <li class="feature-item"><span class="feature-check">✓</span> Paleta + tipografía institucional</li>
+          <li class="feature-item"><span class="feature-check">✓</span> Manual de marca digital</li>
+        </ul>
+      </div>
+      <div class="card-footer">
+        <div class="pricing-row">
+          <span class="price-label">Inversión</span>
+          <span class="price-value">$5,500 MXN</span>
+        </div>
+        <div class="pricing-row">
+          <span class="price-label">Entrega</span>
+          <span class="delivery-badge">2-4 semanas</span>
+        </div>
+        <a href="dim04.html" class="card-cta">
+          Ver detalles <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+      </div>
+    </article>
+    
+    <!-- DIM 05 -->
+    <article class="service-card" data-category="ops">
+      <div class="card-header">
+        <span class="dim-badge">DIM 05</span>
+        <h3 class="card-title">Software POS</h3>
+      </div>
+      <p class="card-subtitle">SalePoint echoShift — Punto de venta profesional sin suscripciones mensuales.</p>
+      <div class="card-media">
+        <video class="card-video" muted loop playsinline preload="none" data-src="assets/clip/OSTP-DIM05.mp4">
+          <source src="" type="video/mp4">
+        </video>
+        <img class="card-img" src="assets/img/OSTP-DIM05.png" alt="Software POS" onerror="this.style.background='linear-gradient(135deg,#0a0a12,#06060a)'">
+        <div class="card-overlay"></div>
+      </div>
+      <div class="card-body">
+        <ul class="feature-list">
+          <li class="feature-item"><span class="feature-check">✓</span> ASP.NET Core + SQLite</li>
+          <li class="feature-item"><span class="feature-check">✓</span> Licencia perpetua (sin mensualidades)</li>
+          <li class="feature-item"><span class="feature-check">✓</span> Gestión de inventario en tiempo real</li>
+        </ul>
+      </div>
+      <div class="card-footer">
+        <div class="pricing-row">
+          <span class="price-label">Inversión</span>
+          <span class="price-value">$12,000 MXN</span>
+        </div>
+        <div class="pricing-row">
+          <span class="price-label">Entrega</span>
+          <span class="delivery-badge">1-2 semanas</span>
+        </div>
+        <a href="dim05.html" class="card-cta">
+          Ver detalles <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+      </div>
+    </article>
+    
+    <!-- DIM 06 -->
+    <article class="service-card" data-category="web">
+      <div class="card-header">
+        <span class="dim-badge">DIM 06</span>
+        <h3 class="card-title">Apps Móviles</h3>
+      </div>
+      <p class="card-subtitle">Android nativo (Kotlin) para gestionar tu negocio desde cualquier lugar.</p>
+      <div class="card-media">
+        <video class="card-video" muted loop playsinline preload="none" data-src="assets/clip/OSTP-DIM06.mp4">
+          <source src="" type="video/mp4">
+        </video>
+        <img class="card-img" src="assets/img/OSTP-DIM06.png" alt="Apps Móviles" onerror="this.style.background='linear-gradient(135deg,#0a0a12,#06060a)'">
+        <div class="card-overlay"></div>
+      </div>
+      <div class="card-body">
+        <ul class="feature-list">
+          <li class="feature-item"><span class="feature-check">✓</span> Desarrollo en Kotlin (nativo)</li>
+          <li class="feature-item"><span class="feature-check">✓</span> Escáner SKU + sincronización</li>
+          <li class="feature-item"><span class="feature-check">✓</span> Publicación en Google Play</li>
+        </ul>
+      </div>
+      <div class="card-footer">
+        <div class="pricing-row">
+          <span class="price-label">Inversión</span>
+          <span class="price-value">$15,000 MXN</span>
+        </div>
+        <div class="pricing-row">
+          <span class="price-label">Entrega</span>
+          <span class="delivery-badge">6-8 semanas</span>
+        </div>
+        <a href="dim06.html" class="card-cta">
+          Ver detalles <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+      </div>
+    </article>
+    
+    <!-- DIM 07 -->
+    <article class="service-card" data-category="ops">
+      <div class="card-header">
+        <span class="dim-badge">DIM 07</span>
+        <h3 class="card-title">Consultoría Leviatán</h3>
+      </div>
+      <p class="card-subtitle">Asesoría estratégica OSTP para escalar tu operación al siguiente nivel.</p>
+      <div class="card-media">
+        <video class="card-video" muted loop playsinline preload="none" data-src="assets/clip/OSTP-DIM07.mp4">
+          <source src="" type="video/mp4">
+        </video>
+        <img class="card-img" src="assets/img/OSTP-DIM07.png" alt="Consultoría Leviatán" onerror="this.style.background='linear-gradient(135deg,#0a0a12,#06060a)'">
+        <div class="card-overlay"></div>
+      </div>
+      <div class="card-body">
+        <ul class="feature-list">
+          <li class="feature-item"><span class="feature-check">✓</span> Diagnóstico profundo de operaciones</li>
+          <li class="feature-item"><span class="feature-check">✓</span> Pipeline modular personalizado</li>
+          <li class="feature-item"><span class="feature-check">✓</span> Sesiones estratégicas 1:1</li>
+        </ul>
+      </div>
+      <div class="card-footer">
+        <div class="pricing-row">
+          <span class="price-label">Inversión</span>
+          <span class="price-value">$10,000 MXN</span>
+        </div>
+        <div class="pricing-row">
+          <span class="price-label">Entrega</span>
+          <span class="delivery-badge">48h diagnóstico</span>
+        </div>
+        <a href="dim07.html" class="card-cta">
+          Ver detalles <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+      </div>
+    </article>
+    
+    <!-- DIM 08 -->
+    <article class="service-card" data-category="infra">
+      <div class="card-header">
+        <span class="dim-badge">DIM 08</span>
+        <h3 class="card-title">Infraestructura Digital</h3>
+      </div>
+      <p class="card-subtitle">Hosting profesional y despliegue continuo para máxima disponibilidad.</p>
+      <div class="card-media">
+        <video class="card-video" muted loop playsinline preload="none" data-src="assets/clip/OSTP-DIM08.mp4">
+          <source src="" type="video/mp4">
+        </video>
+        <img class="card-img" src="assets/img/OSTP-DIM08.png" alt="Infraestructura Digital" onerror="this.style.background='linear-gradient(135deg,#0a0a12,#06060a)'">
+        <div class="card-overlay"></div>
+      </div>
+      <div class="card-body">
+        <ul class="feature-list">
+          <li class="feature-item"><span class="feature-check">✓</span> CI/CD con GitHub Actions</li>
+          <li class="feature-item"><span class="feature-check">✓</span> Monitoreo 24/7 + backups</li>
+          <li class="feature-item"><span class="feature-check">✓</span> 99.9% uptime garantizado</li>
+        </ul>
+      </div>
+      <div class="card-footer">
+        <div class="pricing-row">
+          <span class="price-label">Inversión</span>
+          <span class="price-value">$3,500/mes</span>
+        </div>
+        <div class="pricing-row">
+          <span class="price-label">Entrega</span>
+          <span class="delivery-badge">1 semana</span>
+        </div>
+        <a href="dim08.html" class="card-cta">
+          Ver detalles <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+      </div>
+    </article>
+    
+  </main>
+
+  <!-- GUARANTEE BANNER -->
+  <section class="catalog-guarantee">
+    <p class="guarantee-text">
+      <strong>Garantía OSTP:</strong> Todos nuestros servicios incluyen entrega en tiempo acordado o descuento proporcional. 
+      Diagnóstico gratuito en 48 horas para definir el alcance exacto de tu proyecto.
+    </p>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section class="catalog-cta">
+    <h2>¿Listo para escalar tu operación?</h2>
+    <p>Agenda tu diagnóstico gratuito de 48 horas. Sin compromiso, sin jerga técnica, solo resultados.</p>
+    <div class="cta-group">
+      <a href="index.html" class="card-cta btn-lg">
+        Iniciar proceso <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+      <a href="https://wa.me/5213312345678" class="btn-outline btn-lg" target="_blank" rel="noopener">
+        Contactar por WhatsApp
+      </a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="catalog-footer">
+    <p>© 2026 OSTP @echoShift &nbsp;|&nbsp; 
+    <a href="index.html">Explorar dimensiones</a> &nbsp;|&nbsp; 
+    <a href="index.html">Inicio</a></p>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="../assets/js/main.js" defer></script>
+  
+  <!-- Lógica específica del catálogo -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Lazy-load de videos en hover
+      document.querySelectorAll('.card-video').forEach(video => {
+        const card = video.closest('.service-card');
+        card.addEventListener('mouseenter', () => {
+          const src = video.dataset.src;
+          if (src && !video.src) {
+            video.querySelector('source').src = src;
+            video.load();
+            video.play().catch(() => {
+              // Fallback silencioso
+              video.style.opacity = '0';
+            });
+          }
+        });
+        card.addEventListener('mouseleave', () => {
+          video.pause();
+          video.currentTime = 0;
+        });
+      });
+      
+      // Filtros (funcionalidad básica)
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      const cards = document.querySelectorAll('.service-card');
+      
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          // Actualizar estado activo
+          filterBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          
+          const filter = btn.dataset.filter;
+          
+          // Filtrar cards
+          cards.forEach(card => {
+            if (filter === 'all' || card.dataset.category === filter) {
+              card.style.display = 'flex';
+              setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+              }, 50);
+            } else {
+              card.style.opacity = '0';
+              card.style.transform = 'translateY(12px)';
+              setTimeout(() => {
+                card.style.display = 'none';
+              }, 300);
+            }
+          });
+        });
+      });
+      
+      // Validar sesión para Walled Garden (si se accede desde flujo restringido)
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('from') === 'garden' && !sessionStorage.getItem('ostp_access')) {
+        // Redirigir si no tiene acceso pero vino desde flujo restringido
+        console.warn('[OSTP] Acceso no autorizado a catálogo desde Walled Garden');
+      }
+      
+      console.log('[OSTP] service.html cargado | 8 servicios activos');
+    });
+  </script>
+      
+
+      <!-- OSTP TIMER FLOTANTE + ALERTA DRAMÁTICA -->
+      <script src="assets/js/ostp-timers.js" defer></script>
+        <script>
+          document.addEventListener('DOMContentLoaded', () => {
+            // Inicializar timer estricto de landing
+            OSTP_Timers.init('landing');
+            
+            // Bloquear navegación hacia atrás (estricto)
+            history.pushState(null, null, location.href);
+            window.addEventListener('popstate', () => {
+              history.pushState(null, null, location.href);
+            });
+            
+            // WhatsApp trap: si abren modal, timer sigue corriendo (sin pausa)
+            const waTrap = document.getElementById('waTrap');
+            if (waTrap) {
+              waTrap.addEventListener('click', (e) => {
+                e.preventDefault();
+                // Abrir modal de calificación sin pausar timer
+                document.getElementById('trapModal')?.classList.add('active');
+              });
+            }
+          });
+        </script>
+
+      <!-- Estilos para alerta dramática -->
+          <style>
+    /* ===== AMORPHOUS GRAPH ===== */
+    #amorphous-graph {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+    
+    /* Asegurar que el contenido esté por encima del canvas */
+    .hero, .contact-wrap, .pay-wrap, .thanks-container, 
+    .form-container, .error-container, .catalog-hero, 
+    .catalog-grid, .catalog-guarantee, .catalog-cta,
+    .section, .stats-section, .footer-grid {
+      position: relative;
+      z-index: 1;
+    }
+
+            .ostp-timer-alert.active {
+              display: block !important;
+              animation: ostpRedAlert 1s infinite steps(1);
+            }
+            @keyframes ostpRedAlert {
+              0%, 100% { 
+                background: linear-gradient(135deg, #ff0000, #ffffff);
+                color: #ffffff;
+                box-shadow: 0 0 0 2px #ff0000, 0 0 20px rgba(255,0,0,0.6);
+              }
+              50% { 
+                background: linear-gradient(135deg, #ffffff, #ff0000);
+                color: #ff0000;
+                box-shadow: 0 0 0 2px #ffffff, 0 0 20px rgba(255,255,255,0.6);
+              }
+            }
+            /* Asegurar que alert esté por encima de todo */
+            #ostp-timer-alert { z-index: 10001 !important; }
+          </style>
+    <script>
+    // ===== AMORPHOUS GRAPH (PARTICULAS) =====
+    class AmorphousGraph {
+      constructor(canvasId, config = {}) {
+        this.canvas = document.getElementById(canvasId);
+        if (!this.canvas) return;
+        this.ctx = this.canvas.getContext('2d');
+        this.config = {
+          particleCount: config.particleCount || 50,
+          connectionRadius: config.connectionRadius || 140,
+          particleRadius: config.particleRadius || 2.5,
+          speed: config.speed || 0.4,
+          color: config.color || 'rgba(0,240,255,',
+          ...config
+        };
+        this.particles = [];
+        this.mouse = { x: null, y: null, radius: 150 };
+        this.resize();
+        this.init();
+        this.animate();
+        window.addEventListener('resize', () => this.resize());
+        window.addEventListener('mousemove', (e) => this.handleMouse(e));
+        window.addEventListener('mouseleave', () => {
+          this.mouse.x = null;
+          this.mouse.y = null;
+        });
+      }
+
+      resize() {
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        if (this.canvas.width !== w || this.canvas.height !== h) {
+          this.canvas.width = w;
+          this.canvas.height = h;
+          this.init();
+        }
+      }
+
+      handleMouse(e) {
+        const r = this.canvas.getBoundingClientRect();
+        this.mouse.x = e.clientX - r.left;
+        this.mouse.y = e.clientY - r.top;
+      }
+
+      init() {
+        this.particles = [];
+        for (let i = 0; i < this.config.particleCount; i++) {
+          this.particles.push({
+            x: Math.random() * this.canvas.width,
+            y: Math.random() * this.canvas.height,
+            vx: (Math.random() - 0.5) * this.config.speed,
+            vy: (Math.random() - 0.5) * this.config.speed,
+            radius: Math.random() * 0.8 + this.config.particleRadius * 0.6
+          });
+        }
+      }
+
+      drawParticle(p) {
+        this.ctx.beginPath();
+        this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        this.ctx.fillStyle = this.config.color + '0.8)';
+        this.ctx.fill();
+      }
+
+      drawConnection(p1, p2) {
+        const dx = p1.x - p2.x;
+        const dy = p1.y - p2.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < this.config.connectionRadius) {
+          this.ctx.beginPath();
+          this.ctx.moveTo(p1.x, p1.y);
+          this.ctx.lineTo(p2.x, p2.y);
+          const o = 1 - dist / this.config.connectionRadius;
+          this.ctx.strokeStyle = this.config.color + (o * 0.35) + ')';
+          this.ctx.lineWidth = 0.6;
+          this.ctx.stroke();
+        }
+      }
+
+      updateParticle(p) {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > this.canvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > this.canvas.height) p.vy *= -1;
+        if (this.mouse.x !== null) {
+          const dx = p.x - this.mouse.x;
+          const dy = p.y - this.mouse.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < this.mouse.radius) {
+            const f = (this.mouse.radius - dist) / this.mouse.radius;
+            p.vx += dx * f * 0.02;
+            p.vy += dy * f * 0.02;
+          }
+        }
+      }
+
+      animate() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        for (let i = 0; i < this.particles.length; i++) {
+          for (let j = i + 1; j < this.particles.length; j++) {
+            this.drawConnection(this.particles[i], this.particles[j]);
+          }
+        }
+        for (const p of this.particles) {
+          this.updateParticle(p);
+          this.drawParticle(p);
+        }
+        requestAnimationFrame(() => this.animate());
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (document.getElementById('amorphous-graph')) {
+        new AmorphousGraph('amorphous-graph', {
+          particleCount: 50,
+          connectionRadius: 140,
+          speed: 0.4,
+          color: 'rgba(0,240,255,'
+        });
+      }
+    });
+</script>
+</body>
+</html>

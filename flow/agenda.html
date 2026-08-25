@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Agenda — OSTP @echoShift</title>
+  <meta name="description" content="Agenda una sesión estratégica con OSTP @echoShift. Elige fecha y hora para tu diagnóstico gratuito."/>
+  <link rel="icon" type="image/svg+xml" href="../assets/icon/logo-ostp-hex.svg"/>
+  <link rel="stylesheet" href="../assets/css/main.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    /* ===== AMORPHOUS GRAPH ===== */
+    #amorphous-graph {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.4;
+    }
+
+    .agenda-wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 80px auto 40px;
+      padding: 40px 32px;
+      background: var(--ostp-bg-alt);
+      border: 1px solid var(--ostp-border);
+      border-radius: var(--radius-lg);
+      backdrop-filter: blur(8px);
+    }
+
+    .agenda-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .agenda-header h1 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--ostp-cyan);
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    .agenda-header p {
+      color: var(--ostp-text-muted);
+      font-size: 1.05rem;
+    }
+
+    .agenda-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+
+    .agenda-section {
+      background: var(--ostp-bg);
+      border: 1px solid var(--ostp-border);
+      border-radius: var(--radius-md);
+      padding: 24px;
+    }
+
+    .agenda-section-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ostp-text-muted);
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--ostp-border);
+    }
+
+    /* ===== CALENDARIO ===== */
+    .calendar-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .calendar-nav button {
+      background: transparent;
+      border: 1px solid var(--ostp-border);
+      color: var(--ostp-text);
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition-fast);
+      font-size: 0.9rem;
+    }
+
+    .calendar-nav button:hover {
+      border-color: var(--ostp-cyan);
+      color: var(--ostp-cyan);
+    }
+
+    .calendar-nav span {
+      font-weight: 600;
+      color: var(--ostp-text);
+      font-size: 0.95rem;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+
+    .calendar-grid .weekday {
+      text-align: center;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      color: var(--ostp-text-muted);
+      padding: 4px 0;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    .calendar-grid .day {
+      text-align: center;
+      padding: 8px 0;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition-fast);
+      color: var(--ostp-text);
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .calendar-grid .day:hover:not(.disabled) {
+      background: var(--ostp-cyan-dim);
+      color: var(--ostp-cyan);
+    }
+
+    .calendar-grid .day.selected {
+      background: var(--ostp-cyan);
+      color: var(--ostp-bg);
+    }
+
+    .calendar-grid .day.disabled {
+      color: var(--ostp-text-mute);
+      cursor: not-allowed;
+      opacity: 0.4;
+    }
+
+    .calendar-grid .day.today {
+      border: 1px solid var(--ostp-cyan-dim);
+    }
+
+    /* ===== HORARIOS ===== */
+    .time-slots {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .time-slot {
+      padding: 10px 8px;
+      text-align: center;
+      border: 1px solid var(--ostp-border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition-fast);
+      font-size: 0.85rem;
+      color: var(--ostp-text);
+      background: transparent;
+    }
+
+    .time-slot:hover:not(.disabled) {
+      border-color: var(--ostp-cyan);
+      background: var(--ostp-cyan-dim);
+      color: var(--ostp-cyan);
+    }
+
+    .time-slot.selected {
+      border-color: var(--ostp-cyan);
+      background: var(--ostp-cyan);
+      color: var(--ostp-bg);
+    }
+
+    .time-slot.disabled {
+      color: var(--ostp-text-mute);
+      cursor: not-allowed;
+      opacity: 0.4;
+    }
+
+    .time-slot.booked {
+      color: var(--ostp-text-mute);
+      cursor: not-allowed;
+      opacity: 0.3;
+      text-decoration: line-through;
+    }
+
+    /* ===== FORMULARIO ===== */
+    .agenda-form {
+      margin-top: 16px;
+    }
+
+    .agenda-form .form-group {
+      margin-bottom: 14px;
+    }
+
+    .agenda-form .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .agenda-form .form-label {
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--ostp-text-muted);
+      margin-bottom: 4px;
+    }
+
+    .agenda-form .form-input,
+    .agenda-form .form-select,
+    .agenda-form .form-textarea {
+      width: 100%;
+      padding: 10px 14px;
+      background: var(--ostp-bg);
+      border: 1px solid var(--ostp-border);
+      border-radius: var(--radius-sm);
+      color: var(--ostp-text);
+      font-size: 0.9rem;
+      transition: var(--transition-fast);
+      font-family: var(--font-sans);
+    }
+
+    .agenda-form .form-input:focus,
+    .agenda-form .form-select:focus,
+    .agenda-form .form-textarea:focus {
+      outline: none;
+      border-color: var(--ostp-cyan);
+      box-shadow: 0 0 0 3px var(--ostp-cyan-dim);
+    }
+
+    .agenda-form .form-textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    /* ===== RESUMEN ===== */
+    .agenda-summary {
+      background: linear-gradient(135deg, var(--ostp-purple-dim), transparent);
+      border: 1px solid var(--ostp-border);
+      border-radius: var(--radius-md);
+      padding: 20px 24px;
+      margin-top: 24px;
+      display: none;
+    }
+
+    .agenda-summary.active {
+      display: block;
+      animation: fadeUp 0.4s ease both;
+    }
+
+    .agenda-summary h4 {
+      color: var(--ostp-cyan);
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+    }
+
+    .agenda-summary p {
+      color: var(--ostp-text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+    }
+
+    .agenda-summary strong {
+      color: var(--ostp-text);
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: var(--ostp-cyan);
+      color: var(--ostp-bg);
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: var(--transition-base);
+      margin-top: 16px;
+    }
+
+    .btn-submit:hover {
+      box-shadow: 0 0 32px var(--ostp-cyan-dim);
+      transform: translateY(-2px);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .agenda-wrap {
+        margin: 72px 16px 24px;
+        padding: 24px 16px;
+      }
+
+      .agenda-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .agenda-form .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+      .time-slots {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .agenda-wrap {
+        padding: 16px 12px;
+        margin: 64px 8px 16px;
+      }
+
+      .time-slots {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .calendar-grid .day {
+        padding: 6px 0;
+        font-size: 0.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== AMORPHOUS GRAPH ===== -->
+  <canvas id="amorphous-graph"></canvas>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="../index.html" class="navbar-logo">
+        <img src="../assets/icon/logo-ostp-hex.svg" alt="OSTP"/>
+        OSTP <span class="brand-echo">@echoShift</span>
+      </a>
+      <ul class="navbar-nav">
+        <li><a href="../index.html">Inicio</a></li>
+        <li><a href="../service.html">Servicios</a></li>
+        <li><a href="../static/nosotros.html">Nosotros</a></li>
+        <li><a href="../static/contacto.html">Contacto</a></li>
+      </ul>
+      <a href="../index.html" class="navbar-cta">Diagnóstico gratis</a>
+      <div class="hamburger"><span></span><span></span><span></span></div>
+    </div>
+  </nav>
+
+  <!-- ===== AGENDA WRAP ===== -->
+  <div class="agenda-wrap">
+    <div class="agenda-header">
+      <h1>Agenda tu <span class="gradient-text">sesión</span></h1>
+      <p>Elige fecha y hora para tu diagnóstico estratégico sin costo</p>
+    </div>
+
+    <div class="agenda-grid">
+      <!-- LEFT: Calendario + Horarios -->
+      <div>
+        <div class="agenda-section">
+          <div class="agenda-section-title">
+            <i class="fas fa-calendar-alt" style="margin-right:8px;color:var(--ostp-cyan);"></i> Selecciona fecha
+          </div>
+          <div class="calendar-nav">
+            <button id="prevMonth" aria-label="Mes anterior"><i class="fas fa-chevron-left"></i></button>
+            <span id="monthYear"></span>
+            <button id="nextMonth" aria-label="Mes siguiente"><i class="fas fa-chevron-right"></i></button>
+          </div>
+          <div class="calendar-grid" id="calendarGrid">
+            <!-- Generado por JS -->
+          </div>
+        </div>
+
+        <div class="agenda-section" style="margin-top:16px;">
+          <div class="agenda-section-title">
+            <i class="fas fa-clock" style="margin-right:8px;color:var(--ostp-cyan);"></i> Selecciona horario
+          </div>
+          <div class="time-slots" id="timeSlots">
+            <!-- Generado por JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Formulario -->
+      <div>
+        <div class="agenda-section">
+          <div class="agenda-section-title">
+            <i class="fas fa-user" style="margin-right:8px;color:var(--ostp-cyan);"></i> Tus datos
+          </div>
+
+          <form class="agenda-form" id="agendaForm" onsubmit="submitAgenda(event)">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Nombre *</label>
+                <input type="text" class="form-input" id="a-nombre" placeholder="Tu nombre" required/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Apellido</label>
+                <input type="text" class="form-input" id="a-apellido" placeholder="Tu apellido"/>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">WhatsApp *</label>
+              <input type="tel" class="form-input" id="a-wa" placeholder="33 #### ####" required/>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Correo electrónico</label>
+              <input type="email" class="form-input" id="a-email" placeholder="tu@empresa.com"/>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Nombre del negocio</label>
+              <input type="text" class="form-input" id="a-negocio" placeholder="Mi empresa"/>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Servicio de interés</label>
+              <select class="form-select" id="a-servicio">
+                <option value="">— Selecciona —</option>
+                <option value="01">DIM 01 - Desarrollo Web</option>
+                <option value="02">DIM 02 - Embudos de Venta</option>
+                <option value="03">DIM 03 - Automatización</option>
+                <option value="04">DIM 04 - Branding Digital</option>
+                <option value="05">DIM 05 - Software POS</option>
+                <option value="06">DIM 06 - Apps Móviles</option>
+                <option value="07">DIM 07 - Consultoría Leviatán</option>
+                <option value="08">DIM 08 - Infraestructura Digital</option>
+                <option value="full">Pipeline completo</option>
+                <option value="otro">Otro / No sé todavía</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Mensaje adicional</label>
+              <textarea class="form-textarea" id="a-mensaje" placeholder="Cuéntanos más sobre tu proyecto..." rows="3"></textarea>
+            </div>
+
+            <!-- Resumen -->
+            <div class="agenda-summary" id="agendaSummary">
+              <h4><i class="fas fa-check-circle" style="color:var(--ostp-cyan);margin-right:8px;"></i> Resumen de tu cita</h4>
+              <p><strong>Fecha:</strong> <span id="summaryDate">—</span></p>
+              <p><strong>Hora:</strong> <span id="summaryTime">—</span></p>
+              <p><strong>Servicio:</strong> <span id="summaryService">—</span></p>
+            </div>
+
+            <button type="submit" class="btn-submit" id="btnSubmit" disabled>
+              <i class="fas fa-calendar-check" style="margin-right:8px;"></i> Confirmar agendamiento
+            </button>
+
+            <p style="text-align:center;font-size:0.7rem;color:var(--ostp-text-mute);margin-top:12px;">
+              <i class="fas fa-lock" style="margin-right:4px;"></i> Tus datos están seguros. No compartimos información con terceros.
+            </p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="ostp-footer">
+    <div class="ostp-footer__container">
+      <div class="ostp-footer__brand">
+        <img src="../assets/icon/logo-ostp-hex.svg" alt="OSTP @echoShift"/>
+        <span class="ostp-footer__brand-text">OSTP</span>
+        <span class="ostp-footer__brand-echo">@echoShift</span>
+      </div>
+      <nav class="ostp-footer__links">
+        <a href="../index.html">Inicio</a>
+        <a href="../service.html">Servicios</a>
+        <a href="../static/nosotros.html">Nosotros</a>
+        <a href="../static/contacto.html">Contacto</a>
+        <a href="https://wa.me/523317575573" target="_blank">WhatsApp</a>
+      </nav>
+      <div class="ostp-footer__social">
+        <a href="https://facebook.com/ostp-echoshift" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://github.com/ostp-echoshift" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
+        <a href="https://linkedin.com/company/ostp-echoshift" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+      </div>
+      <div class="ostp-footer__copy">
+        <p>&copy; 2026 <a href="https://www.ostp-echoshift.com" target="_blank">OSTP @echoShift</a>. Todos los derechos reservados.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== SCRIPTS ===== -->
+  <script src="../assets/js/main.js"></script>
+  <script src="../assets/js/core/amorphous.js"></script>
+  <script src="../assets/js/core/api.js"></script>
+
+  <script>
+    'use strict';
+
+    // =========================================================================
+    // CONFIGURACIÓN
+    // =========================================================================
+    const CONFIG = {
+      timeSlots: ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
+                  '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
+                  '15:00', '15:30', '16:00', '16:30', '17:00', '17:30'],
+      bookedSlots: [], // Simulación de slots ocupados
+      minDate: new Date(),
+      maxDate: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000) // 60 días
+    };
+
+    // =========================================================================
+    // ESTADO
+    // =========================================================================
+    const state = {
+      currentMonth: new Date().getMonth(),
+      currentYear: new Date().getFullYear(),
+      selectedDate: null,
+      selectedTime: null,
+      selectedDateStr: null
+    };
+
+    // =========================================================================
+    // DOM REFS
+    // =========================================================================
+    const calendarGrid = document.getElementById('calendarGrid');
+    const monthYear = document.getElementById('monthYear');
+    const timeSlots = document.getElementById('timeSlots');
+    const summaryDate = document.getElementById('summaryDate');
+    const summaryTime = document.getElementById('summaryTime');
+    const summaryService = document.getElementById('summaryService');
+    const agendaSummary = document.getElementById('agendaSummary');
+    const btnSubmit = document.getElementById('btnSubmit');
+    const form = document.getElementById('agendaForm');
+
+    // =========================================================================
+    // FUNCIÓN: Renderizar calendario
+    // =========================================================================
+    function renderCalendar(month, year) {
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const today = new Date();
+      const todayStr = today.toISOString().split('T')[0];
+
+      const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                         'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+      monthYear.textContent = `${monthNames[month]} ${year}`;
+
+      const weekdays = ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'];
+      let html = '';
+
+      // Días de la semana
+      weekdays.forEach(day => {
+        html += `<div class="weekday">${day}</div>`;
+      });
+
+      // Espacios vacíos antes del primer día
+      for (let i = 0; i < firstDay; i++) {
+        html += `<div></div>`;
+      }
+
+      // Días del mes
+      for (let d = 1; d <= daysInMonth; d++) {
+        const dateObj = new Date(year, month, d);
+        const dateStr = dateObj.toISOString().split('T')[0];
+        const isToday = dateStr === todayStr;
+        const isPast = dateObj < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        const isFuture = dateObj > CONFIG.maxDate;
+        const isDisabled = isPast || isFuture;
+        const isSelected = dateStr === state.selectedDateStr;
+
+        let classes = 'day';
+        if (isToday) classes += ' today';
+        if (isDisabled) classes += ' disabled';
+        if (isSelected) classes += ' selected';
+
+        html += `<div class="${classes}" data-date="${dateStr}" data-day="${d}" data-month="${month}" data-year="${year}">${d}</div>`;
+      }
+
+      calendarGrid.innerHTML = html;
+
+      // Event listeners en días
+      calendarGrid.querySelectorAll('.day:not(.disabled)').forEach(el => {
+        el.addEventListener('click', function() {
+          const dateStr = this.dataset.date;
+          const day = parseInt(this.dataset.day);
+          const month = parseInt(this.dataset.month);
+          const year = parseInt(this.dataset.year);
+
+          // Deseleccionar anterior
+          calendarGrid.querySelectorAll('.day.selected').forEach(d => d.classList.remove('selected'));
+
+          // Seleccionar nuevo
+          this.classList.add('selected');
+          state.selectedDate = new Date(year, month, day);
+          state.selectedDateStr = dateStr;
+
+          // Renderizar horarios
+          renderTimeSlots(dateStr);
+
+          // Actualizar resumen
+          updateSummary();
+
+          console.log(`[Agenda] Fecha seleccionada: ${dateStr}`);
+        });
+      });
+    }
+
+    // =========================================================================
+    // FUNCIÓN: Renderizar horarios
+    // =========================================================================
+    function renderTimeSlots(dateStr) {
+      const isToday = dateStr === new Date().toISOString().split('T')[0];
+      const currentHour = new Date().getHours();
+      const currentMinute = new Date().getMinutes();
+
+      let html = '';
+      CONFIG.timeSlots.forEach(time => {
+        const [hour, minute] = time.split(':').map(Number);
+        const isPast = isToday && (hour < currentHour || (hour === currentHour && minute <= currentMinute + 30));
+        const isBooked = CONFIG.bookedSlots.some(slot => slot.date === dateStr && slot.time === time);
+        const isDisabled = isPast || isBooked;
+        const isSelected = state.selectedTime === time;
+
+        let classes = 'time-slot';
+        if (isDisabled) classes += isBooked ? ' booked' : ' disabled';
+        if (isSelected) classes += ' selected';
+
+        html += `<div class="${classes}" data-time="${time}" data-date="${dateStr}">${time}</div>`;
+      });
+
+      timeSlots.innerHTML = html;
+
+      // Event listeners en horarios
+      timeSlots.querySelectorAll('.time-slot:not(.disabled):not(.booked)').forEach(el => {
+        el.addEventListener('click', function() {
+          // Deseleccionar anterior
+          timeSlots.querySelectorAll('.time-slot.selected').forEach(t => t.classList.remove('selected'));
+
+          // Seleccionar nuevo
+          this.classList.add('selected');
+          state.selectedTime = this.dataset.time;
+
+          // Actualizar resumen
+          updateSummary();
+
+          console.log(`[Agenda] Hora seleccionada: ${state.selectedTime}`);
+        });
+      });
+
+      // Resetear selección si no hay slots disponibles
+      if (timeSlots.querySelectorAll('.time-slot:not(.disabled):not(.booked)').length === 0) {
+        state.selectedTime = null;
+        btnSubmit.disabled = true;
+      }
+    }
+
+    // =========================================================================
+    // FUNCIÓN: Actualizar resumen
+    // =========================================================================
+    function updateSummary() {
+      const hasDate = state.selectedDateStr !== null;
+      const hasTime = state.selectedTime !== null;
+
+      if (hasDate) {
+        const dateObj = new Date(state.selectedDateStr);
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        summaryDate.textContent = dateObj.toLocaleDateString('es-MX', options);
+      } else {
+        summaryDate.textContent = '—';
+      }
+
+      summaryTime.textContent = hasTime ? state.selectedTime : '—';
+
+      // Servicio
+      const servicioSelect = document.getElementById('a-servicio');
+      const servicioText = servicioSelect.options[servicioSelect.selectedIndex]?.text || '—';
+      summaryService.textContent = servicioText;
+
+      // Mostrar/ocultar resumen
+      if (hasDate && hasTime) {
+        agendaSummary.classList.add('active');
+        btnSubmit.disabled = false;
+      } else {
+        agendaSummary.classList.remove('active');
+        btnSubmit.disabled = true;
+      }
+
+      // Actualizar servicio en resumen cuando cambie
+      servicioSelect.addEventListener('change', function() {
+        const text = this.options[this.selectedIndex]?.text || '—';
+        summaryService.textContent = text;
+      });
+    }
+
+    // =========================================================================
+    // FUNCIÓN: Navegación del calendario
+    // =========================================================================
+    document.getElementById('prevMonth').addEventListener('click', function() {
+      state.currentMonth--;
+      if (state.currentMonth < 0) {
+        state.currentMonth = 11;
+        state.currentYear--;
+      }
+      renderCalendar(state.currentMonth, state.currentYear);
+    });
+
+    document.getElementById('nextMonth').addEventListener('click', function() {
+      state.currentMonth++;
+      if (state.currentMonth > 11) {
+        state.currentMonth = 0;
+        state.currentYear++;
+      }
+      renderCalendar(state.currentMonth, state.currentYear);
+    });
+
+    // =========================================================================
+    // FUNCIÓN: Enviar formulario
+    // =========================================================================
+    function submitAgenda(e) {
+      e.preventDefault();
+
+      const nombre = document.getElementById('a-nombre').value.trim();
+      const wa = document.getElementById('a-wa').value.trim();
+
+      if (!nombre || !wa) {
+        alert('Por favor, completa los campos obligatorios: Nombre y WhatsApp.');
+        return;
+      }
+
+      if (!state.selectedDateStr || !state.selectedTime) {
+        alert('Por favor, selecciona fecha y hora para tu cita.');
+        return;
+      }
+
+      const data = {
+        nombre: nombre,
+        apellido: document.getElementById('a-apellido').value.trim(),
+        wa: wa,
+        email: document.getElementById('a-email').value.trim(),
+        negocio: document.getElementById('a-negocio').value.trim(),
+        servicio: document.getElementById('a-servicio').value,
+        mensaje: document.getElementById('a-mensaje').value.trim(),
+        fecha: state.selectedDateStr,
+        hora: state.selectedTime,
+        timestamp: new Date().toISOString()
+      };
+
+      console.log('[Agenda] Datos enviados:', data);
+
+      // Mostrar loading
+      btnSubmit.disabled = true;
+      btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+
+      // Simular envío (conectar con OSTP_API cuando esté lista)
+      setTimeout(() => {
+        // Guardar en localStorage para debugging
+        const bookings = JSON.parse(localStorage.getItem('ostp_bookings') || '[]');
+        bookings.push({ ...data, id: 'BOOK-' + Date.now() });
+        localStorage.setItem('ostp_bookings', JSON.stringify(bookings));
+
+        // Marcar horario como ocupado
+        CONFIG.bookedSlots.push({ date: state.selectedDateStr, time: state.selectedTime });
+
+        // Mostrar éxito
+        btnSubmit.innerHTML = '<i class="fas fa-check"></i> ¡Agendado!';
+        btnSubmit.style.background = '#00ff9d';
+        btnSubmit.style.color = '#06060a';
+
+        // Redirigir después de 2 segundos
+        setTimeout(() => {
+          window.location.href = 'gracias.html?type=agenda';
+        }, 2000);
+
+        console.log('[Agenda] Booking guardado:', data);
+      }, 1500);
+    }
+
+    // =========================================================================
+    // INICIALIZACIÓN
+    // =========================================================================
+    document.addEventListener('DOMContentLoaded', () => {
+      // Renderizar calendario inicial
+      const today = new Date();
+      state.currentMonth = today.getMonth();
+      state.currentYear = today.getFullYear();
+      renderCalendar(state.currentMonth, state.currentYear);
+
+      // Inicializar resumen con servicio por defecto
+      updateSummary();
+
+      // Amorphous graph
+      if (document.getElementById('amorphous-graph')) {
+        new AmorphousGraph('amorphous-graph', {
+          particleCount: 40,
+          connectionRadius: 120,
+          speed: 0.3,
+          color: 'rgba(0,240,255,'
+        });
+      }
+
+      console.log('[Agenda] Inicializado');
+    });
+
+    // Exponer funciones globalmente
+    window.submitAgenda = submitAgenda;
+  </script>
+</body>
+</html>

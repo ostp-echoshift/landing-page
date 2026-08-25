@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Agendar Asesoría — OSTP @echoShift</title>
+  <meta name="description" content="Agenda tu sesión de consultoría Leviatán. 60 minutos, propuesta real, sin rodeos."/>
+  <link rel="icon" type="image/svg+xml" href="assets/icon/logo-ostp-hex.svg"/>
+  <link rel="stylesheet" href="../../assets/css/main.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    /* ===== AMORPHOUS GRAPH ===== */
+    #amorphous-graph {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+    
+    /* Asegurar que el contenido esté por encima del canvas */
+    .hero, .contact-wrap, .pay-wrap, .thanks-container, 
+    .form-container, .error-container, .catalog-hero, 
+    .catalog-grid, .catalog-guarantee, .catalog-cta,
+    .section, .stats-section, .footer-grid {
+      position: relative;
+      z-index: 1;
+    }
+
+    .pay-wrap {
+      min-height: 100vh;
+      padding-top: 80px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      max-width: 1200px;
+      margin: 0 auto;
+      gap: 0;
+    }
+    /* LEFT PANEL */
+    .pay-left {
+      padding: 60px 48px;
+      border-right: 1px solid var(--c-border);
+      display: flex;
+      flex-direction: column;
+    }
+    .pay-brand {
+      display: flex; align-items: center; gap: 10px;
+      font-family: var(--font-display);
+      font-size: 0.95rem; font-weight: 700;
+      color: var(--c-text);
+      margin-bottom: 48px;
+    }
+    .pay-brand img { width: 30px; height: 30px; }
+    .pay-left h2 {
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      margin-bottom: 12px;
+    }
+    .pay-left > p {
+      font-size: 0.95rem;
+      color: var(--c-text-dim);
+      margin-bottom: 36px;
+      line-height: 1.7;
+    }
+    .session-box {
+      background: var(--c-bg-card);
+      border: 1px solid var(--c-border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      margin-bottom: 32px;
+    }
+    .session-title {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .session-meta {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--c-text-dim);
+      margin-bottom: 20px;
+      display: flex; gap: 16px; flex-wrap: wrap;
+    }
+    .session-meta span { display: flex; align-items: center; gap: 5px; }
+    .session-includes { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .session-includes li {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 0.88rem; color: var(--c-text-dim);
+    }
+    .session-includes li i { color: var(--c-cyan); margin-top: 2px; }
+    .price-box {
+      background: linear-gradient(135deg, rgba(0,240,255,0.05), rgba(123,46,218,0.05));
+      border: 1px solid var(--c-border-hot);
+      border-radius: var(--radius-lg);
+      padding: 24px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
+    }
+    .price-label { font-family: var(--font-mono); font-size: 0.75rem; color: var(--c-text-dim); text-transform: uppercase; letter-spacing: 1px; }
+    .price-amount {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 900;
+      background: var(--grad-main);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .price-note { font-size: 0.78rem; color: var(--c-text-dim); margin-top: 4px; }
+    .pay-guarantees { display: flex; flex-direction: column; gap: 10px; }
+    .guarantee-item {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 0.85rem; color: var(--c-text-dim);
+    }
+    .guarantee-item i { color: var(--c-cyan); }
+
+    /* RIGHT PANEL */
+    .pay-right {
+      padding: 60px 48px;
+      background: var(--c-bg-card);
+    }
+    .pay-right h3 {
+      font-size: 1.1rem;
+      margin-bottom: 6px;
+      color: var(--c-text);
+    }
+    .pay-right > p {
+      font-size: 0.88rem;
+      color: var(--c-text-dim);
+      margin-bottom: 32px;
+    }
+
+    /* MODAL SELECTOR */
+    .modal-selector {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+    .modal-btn {
+      background: var(--c-bg);
+      border: 1px solid var(--c-border);
+      border-radius: var(--radius);
+      padding: 12px 8px;
+      cursor: pointer;
+      text-align: center;
+      transition: var(--transition);
+    }
+    .modal-btn:hover, .modal-btn.active {
+      border-color: var(--c-cyan);
+      background: rgba(0,240,255,0.05);
+    }
+    .modal-btn i { display: block; font-size: 1.2rem; color: var(--c-cyan); margin-bottom: 6px; }
+    .modal-btn span { font-family: var(--font-mono); font-size: 0.7rem; color: var(--c-text-dim); display: block; }
+    .modal-btn.active span { color: var(--c-cyan); }
+
+    /* CALENDAR STRIP */
+    .calendar-label {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--c-text-dim);
+      margin-bottom: 12px;
+    }
+    .calendar-strip {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+    .cal-day {
+      min-width: 56px;
+      background: var(--c-bg);
+      border: 1px solid var(--c-border);
+      border-radius: var(--radius);
+      padding: 10px 6px;
+      cursor: pointer;
+      text-align: center;
+      transition: var(--transition);
+    }
+    .cal-day:hover, .cal-day.selected {
+      border-color: var(--c-cyan);
+      background: rgba(0,240,255,0.06);
+    }
+    .cal-day .day-name {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      color: var(--c-text-mute);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .cal-day .day-num {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--c-text);
+      margin: 4px 0;
+    }
+    .cal-day.selected .day-num { color: var(--c-cyan); }
+    .cal-day.disabled { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
+
+    /* TIME SLOTS */
+    .time-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+    .time-slot {
+      background: var(--c-bg);
+      border: 1px solid var(--c-border);
+      border-radius: var(--radius);
+      padding: 10px 8px;
+      text-align: center;
+      cursor: pointer;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--c-text-dim);
+      transition: var(--transition);
+    }
+    .time-slot:hover, .time-slot.selected {
+      border-color: var(--c-cyan);
+      color: var(--c-cyan);
+      background: rgba(0,240,255,0.06);
+    }
+    .time-slot.taken { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
+
+    /* FORM */
+    .pay-form { margin-top: 4px; }
+    .pay-form .form-group { margin-bottom: 16px; }
+
+    /* SUBMIT */
+    .pay-submit-area { margin-top: 24px; }
+    .pay-methods {
+      display: flex; align-items: center; gap: 8px;
+      margin-top: 12px;
+    }
+    .pay-methods span {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--c-text-mute);
+    }
+    .pay-method-icon {
+      background: var(--c-bg);
+      border: 1px solid var(--c-border);
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 0.7rem;
+      color: var(--c-text-mute);
+      font-family: var(--font-mono);
+    }
+
+    @media(max-width:900px) {
+      .pay-wrap { grid-template-columns: 1fr; }
+      .pay-left { border-right: none; border-bottom: 1px solid var(--c-border); padding: 40px 24px; }
+      .pay-right { padding: 40px 24px; }
+      .modal-selector { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media(max-width:480px) {
+      .time-grid { grid-template-columns: repeat(2, 1fr); }
+      .modal-selector { grid-template-columns: 1fr; }
+    }
+  </style>
+<script src="../../assets/js/core/api.js"></script>`n</head>
+<body>
+  <!-- ===== AMORPHOUS GRAPH (FONDO DE PARTICULAS) ===== -->
+  <canvas id="amorphous-graph"></canvas>
+
+
+  <nav class="navbar">
+    <div class="container">
+      
+        <a href="index.html" class="navbar-logo">
+          <img src="assets/icon/logo-ostp-hex.svg" alt="OSTP"/>
+          OSTP <span class="brand-echo">@echoShift</span>
+        </a>
+        <ul class="navbar-nav">
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="service.html">Servicios</a></li>
+          <li><a href="nosotros.html">Nosotros</a></li>
+          <li><a href="contacto.html">Contacto</a></li>
+        </ul>
+        <a href="index.html" class="navbar-cta">Diagnóstico gratis</a>
+        <div class="hamburger"><span></span><span></span><span></span></div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="pay-wrap">
+    <!-- LEFT: INFO -->
+    <div class="pay-left">
+      <div class="pay-brand">
+        <img src="assets/icon/logo-ostp-hex.svg" alt="OSTP"/>
+        OSTP @echoShift
+      </div>
+
+      <h2>Asesoría <span class="gradient-text">Leviatán</span></h2>
+      <p>Una sesión con el operador. Sin asistentes, sin scripts. Analizamos tu operación y diseñamos la ruta de digitalización que tu negocio necesita.</p>
+
+      <div class="session-box">
+        <div class="session-title">Sesión de Consultoría Estratégica</div>
+        <div class="session-meta">
+          <span><i class="far fa-clock"></i> 60 minutos</span>
+          <span><i class="fas fa-video" aria-hidden="true"></i> Zoom o presencial</span>
+          <span><i class="fas fa-map-marker-alt" aria-hidden="true"></i> Zapopan, Jal.</span>
+        </div>
+        <ul class="session-includes">
+          <li><i class="fas fa-check-circle" aria-hidden="true"></i><span>Diagnóstico operativo de tu negocio</span></li>
+          <li><i class="fas fa-check-circle" aria-hidden="true"></i><span>Identificación de cuellos de botella</span></li>
+          <li><i class="fas fa-check-circle" aria-hidden="true"></i><span>Propuesta de pipeline Leviatán a medida</span></li>
+          <li><i class="fas fa-check-circle" aria-hidden="true"></i><span>Estimación de costo por dimensión</span></li>
+          <li><i class="fas fa-check-circle" aria-hidden="true"></i><span>Hoja de ruta entregada en PDF</span></li>
+          <li><i class="fas fa-check-circle" aria-hidden="true"></i><span>30 días de seguimiento por WhatsApp</span></li>
+        </ul>
+      </div>
+
+      <div class="price-box">
+        <div>
+          <div class="price-label">Inversión por sesión</div>
+          <div class="price-amount">$1,500</div>
+          <div class="price-note">MXN · IVA incluido</div>
+        </div>
+        <div style="text-align:right">
+          <div class="price-label">Deducible de proyecto</div>
+          <div style="font-family:var(--font-mono);font-size:0.8rem;color:var(--c-cyan);margin-top:4px;">100% al contratar</div>
+        </div>
+      </div>
+
+      <div class="pay-guarantees">
+        <div class="guarantee-item"><i class="fas fa-shield-alt" aria-hidden="true"></i><span>Pago seguro vía MercadoPago</span></div>
+        <div class="guarantee-item"><i class="fas fa-undo" aria-hidden="true"></i><span>Reembolso si cancelas con 24h de anticipación</span></div>
+        <div class="guarantee-item"><i class="fas fa-lock" aria-hidden="true"></i><span>Tu información es confidencial</span></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: FORM -->
+    <div class="pay-right">
+      <h3>Selecciona modalidad y fecha</h3>
+      <p>Elige cómo quieres la sesión, el día y la hora.</p>
+
+      <!-- MODALIDAD -->
+      <div class="calendar-label" style="margin-bottom:10px">Modalidad</div>
+      <div class="modal-selector" style="margin-bottom:28px">
+        <div class="modal-btn active" onclick="selectModal(this,'zoom')">
+          <i class="fas fa-video" aria-hidden="true"></i>
+          <span>Zoom</span>
+        </div>
+        <div class="modal-btn" onclick="selectModal(this,'meet')">
+          <i class="fab fa-google"></i>
+          <span>Google Meet</span>
+        </div>
+        <div class="modal-btn" onclick="selectModal(this,'presencial')">
+          <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+          <span>Presencial</span>
+        </div>
+      </div>
+
+      <!-- CALENDAR -->
+      <div class="calendar-label">Día disponible</div>
+      <div class="calendar-strip" id="calendar-strip"></div>
+
+      <!-- TIME SLOTS -->
+      <div class="calendar-label">Horario</div>
+      <div class="time-grid" id="time-grid"></div>
+
+      <!-- FORM -->
+      <div class="pay-form">
+        <div class="form-group">
+          <label class="form-label">Nombre completo</label>
+          <input type="text" class="form-input" id="p-nombre" placeholder="Tu nombre completo"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">WhatsApp</label>
+          <input type="tel" class="form-input" id="p-wa" placeholder="33 #### ####"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Correo electrónico</label>
+          <input type="email" class="form-input" id="p-email" placeholder="tu@empresa.com"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nombre del negocio</label>
+          <input type="text" class="form-input" id="p-negocio" placeholder="Tu empresa"/ autocomplete="organization">
+        </div>
+        <div class="form-group">
+          <label class="form-label">¿En qué área necesitas ayuda?</label>
+          <select class="form-select" id="p-area">
+            <option value="">— Selecciona una dimensión —</option>
+            <option value="web">DIM 01 · Desarrollo Web</option>
+            <option value="funnels">DIM 02 · Embudos de Venta</option>
+            <option value="automatizacion">DIM 03 · Automatización</option>
+            <option value="branding">DIM 04 · Branding Digital</option>
+            <option value="pos">DIM 05 · Software POS</option>
+            <option value="apps">DIM 06 · Apps Móviles</option>
+            <option value="consultoria">DIM 07 · Consultoría Leviatán</option>
+            <option value="infra">DIM 08 · Infraestructura</option>
+            <option value="full">Todo el pipeline completo</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="pay-submit-area">
+        <button class="btn btn-primary btn-lg" style="width:100%" onclick="processPayment()">
+          <i class="fas fa-credit-card" aria-hidden="true"></i> Pagar y confirmar agenda — $1,500 MXN
+        </button>
+        <div class="pay-methods">
+          <span>Acepta:</span>
+          <span class="pay-method-icon">Visa</span>
+          <span class="pay-method-icon">Mastercard</span>
+          <span class="pay-method-icon">OXXO</span>
+          <span class="pay-method-icon">SPEI</span>
+          <span class="pay-method-icon">MercadoPago</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/js/main.js"></script>
+    <script>
+    let selectedModal = 'zoom';
+    let selectedDay = null;
+    let selectedTime = null;
+
+    function selectModal(el, val) {
+      document.querySelectorAll('.modal-btn').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+      selectedModal = val;
+    }
+
+    function buildCalendar() {
+      const strip = document.getElementById('calendar-strip');
+      const days = ['Dom','Lun','Mar','Mie','Jue','Vie','Sab'];
+      const months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+      const today = new Date();
+      let added = 0;
+      let d = new Date(today);
+      d.setDate(d.getDate() + 1);
+      while (added < 12) {
+        const dow = d.getDay();
+        if (dow !== 0) {
+          const el = document.createElement('div');
+          el.className = 'cal-day' + (dow === 6 ? ' disabled' : '');
+          el.innerHTML = '<div class="day-name">' + days[dow] + '</div><div class="day-num">' + d.getDate() + '</div><div class="day-name">' + months[d.getMonth()] + '</div>';
+          el.addEventListener('click', function() {
+            document.querySelectorAll('.cal-day').forEach(x => x.classList.remove('selected'));
+            this.classList.add('selected');
+            selectedDay = this.querySelector('.day-num').textContent;
+          });
+          strip.appendChild(el);
+          added++;
+        }
+        d.setDate(d.getDate() + 1);
+      }
+    }
+
+    function buildTimeSlots() {
+      const grid = document.getElementById('time-grid');
+      const slots = ['09:00','10:00','11:00','12:00','13:00','15:00','16:00','17:00','18:00'];
+      const taken = ['11:00','15:00'];
+      slots.forEach(t => {
+        const el = document.createElement('div');
+        el.className = 'time-slot' + (taken.includes(t) ? ' taken' : '');
+        el.textContent = t;
+        el.addEventListener('click', function() {
+          document.querySelectorAll('.time-slot').forEach(x => x.classList.remove('selected'));
+          this.classList.add('selected');
+          selectedTime = this.textContent;
+        });
+        grid.appendChild(el);
+      });
+    }
+
+    function processPayment() {
+      const nombre = document.getElementById('p-nombre').value.trim();
+      const wa = document.getElementById('p-wa').value.trim();
+      const email = document.getElementById('p-email').value.trim();
+      const negocio = document.getElementById('p-negocio').value.trim();
+      const area = document.getElementById('p-area').value;
+
+      if (!nombre || !wa) {
+        alert('Por favor completa tu nombre y WhatsApp');
+        return;
+      }
+      if (!selectedDay || !selectedTime) {
+        alert('Selecciona dia y horario');
+        return;
+      }
+
+      const bookingData = {
+        nombre: nombre,
+        wa: wa,
+        email: email,
+        negocio: negocio,
+        area: area,
+        modalidad: selectedModal,
+        fecha: selectedDay,
+        hora: selectedTime,
+        dim: new URLSearchParams(window.location.search).get('dim') || '00',
+        amount: 1500,
+        timestamp: new Date().toISOString()
+      };
+
+      // Persistencia SQL + WhatsApp Bot (ostp-timers.js)
+      if (typeof OSTP_Timers !== 'undefined' && OSTP_Timers.paypage.validate(bookingData)) {
+        window.location.href = 'gracias.html?dim=' + bookingData.dim + '&paid=1&sesion=' + encodeURIComponent(selectedDay + ' ' + selectedTime);
+      } else {
+        OSTP_API.processPayment(bookingData).then(() => {
+          window.location.href = 'gracias.html?dim=' + bookingData.dim + '&sesion=' + encodeURIComponent(selectedDay + ' ' + selectedTime);
+        }).catch(err => {
+          console.warn('[OSTP] Fallback local:', err);
+          alert('Datos guardados localmente. El operador te contactara en 24h.');
+        });
+      }
+    }
+
+    // Inicializacion
+    document.addEventListener('DOMContentLoaded', () => {
+      buildCalendar();
+      buildTimeSlots();
+    });
+  </script>
+  <script src="assets/js/ostp-timers.js" defer></script>
+<script>
+    // ===== AMORPHOUS GRAPH (PARTICULAS) =====
+    class AmorphousGraph {
+      constructor(canvasId, config = {}) {
+        this.canvas = document.getElementById(canvasId);
+        if (!this.canvas) return;
+        this.ctx = this.canvas.getContext('2d');
+        this.config = {
+          particleCount: config.particleCount || 50,
+          connectionRadius: config.connectionRadius || 140,
+          particleRadius: config.particleRadius || 2.5,
+          speed: config.speed || 0.4,
+          color: config.color || 'rgba(0,240,255,',
+          ...config
+        };
+        this.particles = [];
+        this.mouse = { x: null, y: null, radius: 150 };
+        this.resize();
+        this.init();
+        this.animate();
+        window.addEventListener('resize', () => this.resize());
+        window.addEventListener('mousemove', (e) => this.handleMouse(e));
+        window.addEventListener('mouseleave', () => {
+          this.mouse.x = null;
+          this.mouse.y = null;
+        });
+      }
+
+      resize() {
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        if (this.canvas.width !== w || this.canvas.height !== h) {
+          this.canvas.width = w;
+          this.canvas.height = h;
+          this.init();
+        }
+      }
+
+      handleMouse(e) {
+        const r = this.canvas.getBoundingClientRect();
+        this.mouse.x = e.clientX - r.left;
+        this.mouse.y = e.clientY - r.top;
+      }
+
+      init() {
+        this.particles = [];
+        for (let i = 0; i < this.config.particleCount; i++) {
+          this.particles.push({
+            x: Math.random() * this.canvas.width,
+            y: Math.random() * this.canvas.height,
+            vx: (Math.random() - 0.5) * this.config.speed,
+            vy: (Math.random() - 0.5) * this.config.speed,
+            radius: Math.random() * 0.8 + this.config.particleRadius * 0.6
+          });
+        }
+      }
+
+      drawParticle(p) {
+        this.ctx.beginPath();
+        this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        this.ctx.fillStyle = this.config.color + '0.8)';
+        this.ctx.fill();
+      }
+
+      drawConnection(p1, p2) {
+        const dx = p1.x - p2.x;
+        const dy = p1.y - p2.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < this.config.connectionRadius) {
+          this.ctx.beginPath();
+          this.ctx.moveTo(p1.x, p1.y);
+          this.ctx.lineTo(p2.x, p2.y);
+          const o = 1 - dist / this.config.connectionRadius;
+          this.ctx.strokeStyle = this.config.color + (o * 0.35) + ')';
+          this.ctx.lineWidth = 0.6;
+          this.ctx.stroke();
+        }
+      }
+
+      updateParticle(p) {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > this.canvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > this.canvas.height) p.vy *= -1;
+        if (this.mouse.x !== null) {
+          const dx = p.x - this.mouse.x;
+          const dy = p.y - this.mouse.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < this.mouse.radius) {
+            const f = (this.mouse.radius - dist) / this.mouse.radius;
+            p.vx += dx * f * 0.02;
+            p.vy += dy * f * 0.02;
+          }
+        }
+      }
+
+      animate() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        for (let i = 0; i < this.particles.length; i++) {
+          for (let j = i + 1; j < this.particles.length; j++) {
+            this.drawConnection(this.particles[i], this.particles[j]);
+          }
+        }
+        for (const p of this.particles) {
+          this.updateParticle(p);
+          this.drawParticle(p);
+        }
+        requestAnimationFrame(() => this.animate());
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (document.getElementById('amorphous-graph')) {
+        new AmorphousGraph('amorphous-graph', {
+          particleCount: 50,
+          connectionRadius: 140,
+          speed: 0.4,
+          color: 'rgba(0,240,255,'
+        });
+      }
+    });
+</script>
+</body>
+</html>

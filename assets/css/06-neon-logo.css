@@ -1,0 +1,55 @@
+/* =============================================================================
+   06-neon-logo.css — Estilos del logo neon
+   Wrapper, animaciones flotantes y pulso
+   ============================================================================= */
+
+.ostp-neon-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 16px;
+  background: rgba(6, 6, 10, 0.4);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 0 40px rgba(0, 240, 255, 0.08);
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.ostp-neon-wrapper:hover { box-shadow: 0 0 60px rgba(0,240,255,0.2); }
+
+.ostp-neon-logo {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 120px;
+  filter: drop-shadow(0 0 20px rgba(0, 240, 255, 0.15));
+  transition: filter 0.6s ease, transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  cursor: pointer;
+}
+.ostp-neon-logo:hover {
+  filter: drop-shadow(0 0 40px rgba(0, 240, 255, 0.4));
+  transform: scale(1.02);
+}
+.ostp-neon-hero { max-width: 380px; animation: neonFloat 5s ease-in-out infinite; }
+.ostp-neon-hero:hover { animation-play-state: paused; transform: scale(1.03); }
+.ostp-neon-nav { max-width: 48px; height: auto; }
+
+.ostp-neon-logo.powered-on {
+  filter: drop-shadow(0 0 30px rgba(0, 240, 255, 0.5)) drop-shadow(0 0 60px rgba(123, 46, 218, 0.2));
+  animation: neonPulse 3s ease-in-out infinite;
+}
+
+@keyframes neonFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+@keyframes neonPulse {
+  0%, 100% { filter: drop-shadow(0 0 30px rgba(0,240,255,0.5)) drop-shadow(0 0 60px rgba(123,46,218,0.2)); }
+  50% { filter: drop-shadow(0 0 50px rgba(0,240,255,0.7)) drop-shadow(0 0 100px rgba(123,46,218,0.4)); }
+}
+
+@media (max-width: 768px) { .ostp-neon-hero { max-width: 260px; } .ostp-neon-nav { max-width: 36px; } }
+@media (max-width: 480px) { .ostp-neon-hero { max-width: 200px; } .ostp-neon-nav { max-width: 32px; } }
+@media (prefers-reduced-motion: reduce) {
+  .ostp-neon-logo, .ostp-neon-hero, .ostp-neon-logo.powered-on {
+    animation: none !important; transition: none !important;
+    filter: drop-shadow(0 0 20px rgba(0,240,255,0.2));
+  }
+}

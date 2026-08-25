@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+  <meta property="og:title" content="DIM 01 / OSTP @echoShift">  <meta property="og:description" content="Desarrollo web profesional con identidad de marca, SEO básico y SSL incluido. Desde $4,500 MXN.">  <meta property="og:type" content="website">  <meta name="twitter:card" content="summary_large_image">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DIM 01 / Desarrollo Web | OSTP @echoShift</title>
+  <meta name="description" content="Desarrollo web profesional con identidad de marca, SEO básico y SSL incluido. Desde ,500 MXN.">
+  <link rel="icon" type="image/svg+xml" href="assets/icon/logo-ostp-hex.svg">
+  <link rel="stylesheet" href="../../assets/css/main.css">
+  <style>
+    /* ===== HEXÁGONO DINÁMICO PARA DIM PAGE ===== */
+    .dim-hex {
+      width: 80px;
+      height: 80px;
+      clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(6, 6, 10, 0.9);
+      backdrop-filter: blur(4px);
+      border: 2px solid #00c8ff;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      cursor: pointer;
+      margin-bottom: 20px;
+      position: relative;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    }
+    
+    .dim-hex:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 40px #00c8ff33, inset 0 0 20px #00c8ff22;
+      border-color: #00c8ff;
+    }
+    
+    .dim-hex.expanded {
+      transform: scale(1.15);
+      box-shadow: 0 0 60px #00c8ff44, inset 0 0 30px #00c8ff33;
+      border-color: #00c8ff;
+    }
+    
+    .dim-hex svg {
+      width: 32px;
+      height: 32px;
+      stroke: #00c8ff;
+      fill: none;
+      stroke-width: 1.8;
+      transition: transform 0.3s ease;
+    }
+    
+    .dim-hex:hover svg {
+      transform: scale(1.1);
+    }
+    
+    .dim-hex .hex-glow {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 40%, #00c8ff22, transparent 70%);
+      clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .dim-hex:hover .hex-glow {
+      opacity: 1;
+    }
+    
+    .dim-hex .hex-label {
+      position: absolute;
+      bottom: -28px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #00c8ff;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      white-space: nowrap;
+      font-weight: 600;
+    }
+    
+    .dim-hex:hover .hex-label {
+      opacity: 1;
+    }
+    
+    .dim-hex.expanded .hex-label {
+      opacity: 1;
+    }
+    
+    /* ===== HEADER CON HEXÁGONO ===== */
+    .dim-header-with-hex {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 16px;
+    }
+    
+    @media (max-width: 600px) {
+      .dim-header-with-hex {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      .dim-hex {
+        width: 64px;
+        height: 64px;
+      }
+      .dim-hex svg {
+        width: 26px;
+        height: 26px;
+      }
+      .dim-hex .hex-label {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- VIDEO DE FONDO -->
+  <video class="dim-hero-video" muted loop playsinline preload="none">
+    <source src="assets/clip/OSTP-DIM01.mp4" type="video/mp4">
+  </video>
+  <img class="fallback-img" src="assets/img/OSTP-DIM01.png" alt="Desarrollo Web" aria-hidden="true">
+
+  <!-- HEADER -->
+  <header class="global-header">
+    <object type="image/svg+xml" data="assets/icon/logo-ostp-hex.svg" id="OFICIAL-LOGO" aria-label="OSTP Logo"></object>
+    <nav aria-label="Navegación principal">
+      <a href="service.html" class="nav-link">← Catálogo</a>
+      <a href="index.html" class="nav-link">Explorar</a>
+    </nav>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="dim-card-container" id="dim-root">
+    
+    <!-- Badge + Ícono Hexágono -->
+    <div class="dim-header-with-hex">
+      <div class="dim-hex" id="dimHex-01" onclick="toggleHex(this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        <div class="hex-glow"></div>
+        <span class="hex-label">DIM 01</span>
+      </div>
+      <div>
+        <span class="badge">DIM 01</span>
+      </div>
+    </div>
+
+    <!-- Título con efecto glitch -->
+    <h1 class="dim-title glitch" id="dim-title" data-text="Desarrollo Web">Desarrollo Web</h1>
+
+    <!-- Subtítulo -->
+    <p class="dim-subtitle" id="dim-subtitle">Sitios, portales y sistemas digitales con identidad propia y alto impacto.</p>
+
+    <!-- Grid de contenido -->
+    <section class="dim-content-grid">
+
+      <!-- Descripción -->
+      <div class="dim-section">
+        <h2 class="dim-section-title">Descripción</h2>
+        <p class="dim-description" id="dim-desc">Sitios, portales y sistemas digitales con identidad propia y alto impacto.</p>
+      </div>
+
+      <!-- Features -->
+      <div class="dim-section">
+        <h2 class="dim-section-title">Incluye</h2>
+        <ul class="feature-list" id="dim-features">
+          <li class='feature-item'><span class='feature-check'>✓</span> GitHub Pages + dominio personalizado</li>
+          <li class='feature-item'><span class='feature-check'>✓</span> Diseño 100% responsivo (móvil, tablet, desktop)</li>
+          <li class='feature-item'><span class='feature-check'>✓</span> Identidad de marca integrada</li>
+          <li class='feature-item'><span class='feature-check'>✓</span> Certificado SSL (HTTPS) incluido</li>
+          <li class='feature-item'><span class='feature-check'>✓</span> Optimización SEO básica</li>
+          <li class='feature-item'><span class='feature-check'>✓</span> Formulario de contacto funcional</li>
+        </ul>
+      </div>
+
+      <!-- Pricing & Delivery -->
+      <div class="dim-section dim-section--highlight">
+        <div class="pricing-box">
+          <span class="pricing-label">Inversión</span>
+          <span class="pricing-amount" id="dim-price">Desde $4,500 MXN</span>
+        </div>
+        <div class="delivery-box">
+          <span class="delivery-label">Entrega</span>
+          <span class="delivery-time" id="dim-delivery">2-3 semanas</span>
+        </div>
+      </div>
+
+      <!-- Garantía -->
+      <div class="dim-section">
+        <div class="guarantee-box">
+          <span class="guarantee-icon">✓</span>
+          <p class="guarantee-text" id="dim-guarantee"><strong>Garantía OSTP:</strong> Entrega en tiempo acordado o 50% de descuento.</p>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- CTA -->
+    <div class="dim-cta-wrapper">
+      <a href="flow/form.html?dim=01" class="btn btn--primary" id="cta-agendar">
+        <i class="fas fa-calendar-check" aria-hidden="true"></i> Agendar diagnóstico
+      </a>
+      <p class="cta-hint">Responde <strong>"DIM01"</strong> para iniciar</p>
+    </div>
+
+    <!-- Hashtags -->
+    <div class="dim-tags">
+      <span class='tag'>#DesarrolloWeb</span>
+      <span class='tag'>#OSTP</span>
+      <span class='tag'>#echoShift</span>
+      <span class='tag'>#PyMEs</span>
+      <span class='tag'>#México</span>
+      <span class='tag'>#SitiosWeb</span>
+    </div>
+
+  </main>
+
+  <!-- NAVEGACIÓN CONTEXTUAL -->
+  <nav class="dim-nav">
+    <a href="service.html" class="nav-link">← Catálogo</a>
+    <span class="nav-link" style="color:var(--ostp-text-muted)">DIM 01 de 08</span>
+    <a href="dim02.html" class="nav-link nav-link--next">Siguiente →</a>
+  </nav>
+
+  <!-- SCRIPTS -->
+  <script src="../../assets/js/main.js" defer></script>
+  <script>
+    function toggleHex(el) {
+      // Remover expansión de otros hexágonos
+      document.querySelectorAll('.dim-hex').forEach(h => h.classList.remove('expanded'));
+      // Toggle en el actual
+      if (el.classList.contains('expanded')) {
+        el.classList.remove('expanded');
+      } else {
+        el.classList.add('expanded');
+        // Auto-colapsar después de 3 segundos
+        setTimeout(() => {
+          el.classList.remove('expanded');
+        }, 3000);
+      }
+    }
+  </script>
+</body>
+</html>

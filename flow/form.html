@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Registro de Interés — OSTP @echoShift</title>
+  <link rel="stylesheet" href="../../assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/landing-styles.css">
+  <style>
+    /* ===== AMORPHOUS GRAPH ===== */
+    #amorphous-graph {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+    
+    /* Asegurar que el contenido esté por encima del canvas */
+    .hero, .contact-wrap, .pay-wrap, .thanks-container, 
+    .form-container, .error-container, .catalog-hero, 
+    .catalog-grid, .catalog-guarantee, .catalog-cta,
+    .section, .stats-section, .footer-grid {
+      position: relative;
+      z-index: 1;
+    }
+
+    :root { --form-timer: 300; } /* 5 minutos en segundos */
+    .form-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 80px 20px 40px; background: var(--ostp-bg); }
+    .form-card { background: var(--ostp-bg-alt); border: 1px solid var(--ostp-border); border-radius: 20px; padding: 40px; max-width: 520px; width: 100%; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+    .form-timer-badge { position: absolute; top: -12px; right: 24px; background: var(--ostp-cyan); color: var(--ostp-bg); font-family: 'Orbitron', monospace; font-size: 0.8rem; font-weight: 700; padding: 4px 12px; border-radius: 20px; letter-spacing: 0.08em; }
+    .form-title { font-family: 'Orbitron', monospace; font-size: 1.5rem; color: var(--ostp-cyan); margin-bottom: 8px; }
+    .form-subtitle { font-size: 0.9rem; color: var(--ostp-text-muted); margin-bottom: 24px; }
+    .form-group { margin-bottom: 20px; }
+    .form-label { display: block; font-size: 0.8rem; color: var(--ostp-text-muted); margin-bottom: 6px; letter-spacing: 0.08em; text-transform: uppercase; }
+    .form-input, .form-select, .form-textarea { width: 100%; padding: 12px 16px; background: rgba(0,0,0,0.2); border: 1px solid var(--ostp-border); border-radius: 10px; color: var(--ostp-text); font-size: 1rem; transition: border-color 0.2s; }
+    .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: var(--ostp-cyan); }
+    .form-textarea { min-height: 100px; resize: vertical; }
+    .form-submit { width: 100%; padding: 14px; background: var(--ostp-cyan); color: var(--ostp-bg); border: none; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.2s; margin-top: 8px; }
+    .form-submit:hover { box-shadow: 0 0 24px var(--ostp-cyan-dim); transform: translateY(-1px); }
+    .form-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .form-note { font-size: 0.75rem; color: var(--ostp-text-muted); text-align: center; margin-top: 16px; }
+    .form-error { color: #ff6b6b; font-size: 0.8rem; margin-top: 4px; display: none; }
+    .form-error.active { display: block; }
+    
+    /* Timer Bar */
+    .timer-bar { position: fixed; top: 0; left: 0; right: 0; height: 4px; background: rgba(0,240,255,0.15); z-index: 1000; pointer-events: none; }
+    .timer-progress { height: 100%; width: 100%; background: linear-gradient(90deg, #00f0ff, #7b2eda); transform-origin: left; transition: width 1s linear; }
+    .timer-warning { position: fixed; top: 16px; right: 24px; background: #ff6b6b; color: white; padding: 6px 14px; border-radius: 20px; font-family: 'Orbitron', monospace; font-size: 0.75rem; font-weight: 700; z-index: 1001; display: none; animation: pulseWarn 1s infinite; }
+    .timer-warning.active { display: block; }
+    @keyframes pulseWarn { 0%,100%{opacity:1} 50%{opacity:0.6} }
+    
+    @media (max-width: 600px) { .form-card { padding: 28px 24px; } .form-timer-badge { top: -8px; right: 16px; font-size: 0.75rem; } .timer-warning { top: 12px; right: 16px; font-size: 0.7rem; } }
+  </style>
+</head>
+<body class="no-back">
+  <!-- ===== AMORPHOUS GRAPH (FONDO DE PARTICULAS) ===== -->
+  <canvas id="amorphous-graph"></canvas>
+
+
+  <div class="timer-bar"><div class="timer-progress" id="timerProgress"></div></div>
+  <div class="timer-warning" id="timerWarning">⏱️ 01:00 restante</div>
+
+  <div class="form-container">
+    <div class="form-card">
+      <div class="form-timer-badge" id="formTimer">05:00</div>
+      <h1 class="form-title">Registro de Interés</h1>
+      <p class="form-subtitle">Completa este formulario para continuar. <strong>05:00 minutos</strong> para finalizar.</p>
+      
+      <form id="interestForm" novalidate autocomplete="off">
+        <div class="form-group">
+          <label class="form-label" for="nombre">Nombre completo *</label>
+          <input type="text" id="nombre" name="nombre" class="form-input" required placeholder="Tu nombre">
+          <div class="form-error" id="error-nombre">Este campo es requerido</div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label" for="email">Correo electrónico *</label>
+          <input type="email" id="email" name="email" class="form-input" required placeholder="tu@empresa.com">
+          <div class="form-error" id="error-email">Correo inválido</div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label" for="whatsapp">WhatsApp *</label>
+          <input type="tel" id="whatsapp" name="whatsapp" class="form-input" required placeholder="33 1234 5678">
+          <div class="form-error" id="error-whatsapp">Teléfono inválido (10 dígitos)</div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label" for="negocio">Nombre del negocio *</label>
+          <input type="text" id="negocio" name="negocio" class="form-input" required placeholder="Mi empresa">
+          <div class="form-error" id="error-negocio">Este campo es requerido</div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label" for="servicio">Servicio de interés *</label>
+          <select id="servicio" name="servicio" class="form-select" required>
+            <option value="">Selecciona una dimensión</option>
+            <option value="01">01 · Desarrollo Web</option>
+            <option value="02">02 · Embudos de Venta</option>
+            <option value="03">03 · Automatización</option>
+            <option value="04">04 · Branding Digital</option>
+            <option value="05">05 · Software POS</option>
+            <option value="06">06 · Apps Móviles</option>
+            <option value="07">07 · Consultoría Leviatán</option>
+            <option value="08">08 · Infraestructura Digital</option>
+          </select>
+          <div class="form-error" id="error-servicio">Selecciona un servicio</div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label" for="mensaje">Cuéntanos más (opcional)</label>
+          <textarea id="mensaje" name="mensaje" class="form-textarea" placeholder="Describe tu necesidad específica..."></textarea>
+        </div>
+        
+        <button type="submit" class="form-submit" id="btnSubmit">Continuar a Pago →
+  <noscript>
+    <div style="margin-top: 16px; padding: 16px; background: rgba(255,0,0,0.1); border: 1px solid #ff6b6b; border-radius: 12px; text-align: center;">
+      <p style="color: #ff6b6b; margin-bottom: 12px;">Atencion: JavaScript esta desactivado. Haz clic para continuar manualmente.</p>
+      <a href="paypage.html" class="btn btn-primary" style="background: #00f0ff; color: #06060a; padding: 12px 24px; border-radius: 12px; text-decoration: none; font-weight: 700;">Continuar a pago</a>
+    </div>
+  </noscript>
+        <p class="form-note">Tus datos son confidenciales. Al enviar aceptas nuestros términos.</p>
+      </form>
+    </div>
+  </div>
+
+  <script src="../../assets/js/main.js" defer></script>
+  <script>
+    (function(){
+      'use strict';
+      const TIMER_SEC = 300; // 5 min
+      const WARNING_SEC = 60;
+      let endTime;
+
+      // Inicializar timer
+      if (!sessionStorage.getItem('ostp_form_end')) {
+        sessionStorage.setItem('ostp_form_end', (Date.now() + TIMER_SEC * 1000).toString());
+      }
+      endTime = parseInt(sessionStorage.getItem('ostp_form_end'), 10);
+
+      const timerEl = document.getElementById('formTimer');
+      const progressEl = document.getElementById('timerProgress');
+      const warningEl = document.getElementById('timerWarning');
+
+      function tick() {
+        const remaining = Math.max(0, endTime - Date.now());
+        const sec = Math.ceil(remaining / 1000);
+        const min = Math.floor(sec / 60).toString().padStart(2, '0');
+        const s = (sec % 60).toString().padStart(2, '0');
+        timerEl.textContent = `${min}:${s}`;
+        progressEl.style.width = `${(remaining / (TIMER_SEC * 1000)) * 100}%`;
+
+        if (remaining <= WARNING_SEC * 1000) {
+          warningEl.classList.add('active');
+          warningEl.textContent = `⏱️ ${min}:${s} restante`;
+        }
+
+        if (remaining <= 0) {
+          sessionStorage.removeItem('ostp_form_end');
+          window.location.href = 'funnel.html?timeout=1';
+          return;
+        }
+        requestAnimationFrame(tick);
+      }
+      tick();
+
+      // Validación y Submit
+      const form = document.getElementById('interestForm');
+      const btn = document.getElementById('btnSubmit');
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        let valid = true;
+        const fields = ['nombre', 'email', 'whatsapp', 'negocio', 'servicio'];
+        fields.forEach(fid => {
+          const el = document.getElementById(fid);
+          const err = document.getElementById(`error-${fid}`);
+          if (!el.value.trim()) { err.classList.add('active'); valid = false; } 
+          else { err.classList.remove('active'); }
+          if (fid === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value)) { err.classList.add('active'); valid = false; }
+        });
+
+        if (!valid) return;
+
+        btn.disabled = true;
+        btn.textContent = 'Procesando...';
+
+        // Guardar datos y autorizar Walled Garden
+        const data = {
+          nombre: document.getElementById('nombre').value,
+          email: document.getElementById('email').value,
+          whatsapp: document.getElementById('whatsapp').value,
+          negocio: document.getElementById('negocio').value,
+          servicio: document.getElementById('servicio').value,
+          mensaje: document.getElementById('mensaje').value,
+          step: 'form',
+          ts: Date.now()
+        };
+        sessionStorage.setItem('ostp_wg_data', JSON.stringify(data));
+        sessionStorage.setItem('ostp_access', 'true');
+        
+        // Redirigir a paypage
+        window.location.href = `paypage.html?dim=${data.servicio}`;
+      });
+
+      // Bloquear back
+      history.pushState(null, null, location.href);
+      window.addEventListener('popstate', () => history.pushState(null, null, location.href));
+    })();
+  </script>
+<script>
+    // ===== AMORPHOUS GRAPH (PARTICULAS) =====
+    class AmorphousGraph {
+      constructor(canvasId, config = {}) {
+        this.canvas = document.getElementById(canvasId);
+        if (!this.canvas) return;
+        this.ctx = this.canvas.getContext('2d');
+        this.config = {
+          particleCount: config.particleCount || 50,
+          connectionRadius: config.connectionRadius || 140,
+          particleRadius: config.particleRadius || 2.5,
+          speed: config.speed || 0.4,
+          color: config.color || 'rgba(0,240,255,',
+          ...config
+        };
+        this.particles = [];
+        this.mouse = { x: null, y: null, radius: 150 };
+        this.resize();
+        this.init();
+        this.animate();
+        window.addEventListener('resize', () => this.resize());
+        window.addEventListener('mousemove', (e) => this.handleMouse(e));
+        window.addEventListener('mouseleave', () => {
+          this.mouse.x = null;
+          this.mouse.y = null;
+        });
+      }
+
+      resize() {
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        if (this.canvas.width !== w || this.canvas.height !== h) {
+          this.canvas.width = w;
+          this.canvas.height = h;
+          this.init();
+        }
+      }
+
+      handleMouse(e) {
+        const r = this.canvas.getBoundingClientRect();
+        this.mouse.x = e.clientX - r.left;
+        this.mouse.y = e.clientY - r.top;
+      }
+
+      init() {
+        this.particles = [];
+        for (let i = 0; i < this.config.particleCount; i++) {
+          this.particles.push({
+            x: Math.random() * this.canvas.width,
+            y: Math.random() * this.canvas.height,
+            vx: (Math.random() - 0.5) * this.config.speed,
+            vy: (Math.random() - 0.5) * this.config.speed,
+            radius: Math.random() * 0.8 + this.config.particleRadius * 0.6
+          });
+        }
+      }
+
+      drawParticle(p) {
+        this.ctx.beginPath();
+        this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        this.ctx.fillStyle = this.config.color + '0.8)';
+        this.ctx.fill();
+      }
+
+      drawConnection(p1, p2) {
+        const dx = p1.x - p2.x;
+        const dy = p1.y - p2.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < this.config.connectionRadius) {
+          this.ctx.beginPath();
+          this.ctx.moveTo(p1.x, p1.y);
+          this.ctx.lineTo(p2.x, p2.y);
+          const o = 1 - dist / this.config.connectionRadius;
+          this.ctx.strokeStyle = this.config.color + (o * 0.35) + ')';
+          this.ctx.lineWidth = 0.6;
+          this.ctx.stroke();
+        }
+      }
+
+      updateParticle(p) {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > this.canvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > this.canvas.height) p.vy *= -1;
+        if (this.mouse.x !== null) {
+          const dx = p.x - this.mouse.x;
+          const dy = p.y - this.mouse.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < this.mouse.radius) {
+            const f = (this.mouse.radius - dist) / this.mouse.radius;
+            p.vx += dx * f * 0.02;
+            p.vy += dy * f * 0.02;
+          }
+        }
+      }
+
+      animate() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        for (let i = 0; i < this.particles.length; i++) {
+          for (let j = i + 1; j < this.particles.length; j++) {
+            this.drawConnection(this.particles[i], this.particles[j]);
+          }
+        }
+        for (const p of this.particles) {
+          this.updateParticle(p);
+          this.drawParticle(p);
+        }
+        requestAnimationFrame(() => this.animate());
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (document.getElementById('amorphous-graph')) {
+        new AmorphousGraph('amorphous-graph', {
+          particleCount: 50,
+          connectionRadius: 140,
+          speed: 0.4,
+          color: 'rgba(0,240,255,'
+        });
+      }
+    });
+</script>
+</body>
+</html>

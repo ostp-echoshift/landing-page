@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+  <meta property="og:title" content="DIM 03 / OSTP @echoShift">  <meta property="og:description" content="Automatización con WhatsApp Business API, CRM y flujos personalizados. Ahorra hasta 70% en tiempo operativo.">  <meta property="og:type" content="website">  <meta name="twitter:card" content="summary_large_image">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DIM 03 / Automatización | OSTP @echoShift</title>
+  <meta name="description" content="Automatización con WhatsApp Business API, CRM y flujos personalizados. Ahorra hasta 70% en tiempo operativo.">
+  <link rel="icon" type="image/svg+xml" href="assets/icon/logo-ostp-hex.svg">
+  <link rel="stylesheet" href="../../assets/css/main.css">
+  <style>
+    /* ===== HEXÁGONO DINÁMICO PARA DIM PAGE ===== */
+    .dim-hex {
+      width: 80px;
+      height: 80px;
+      clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(6, 6, 10, 0.9);
+      backdrop-filter: blur(4px);
+      border: 2px solid #a855f7;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      cursor: pointer;
+      margin-bottom: 20px;
+      position: relative;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    }
+    
+    .dim-hex:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 40px #a855f733, inset 0 0 20px #a855f722;
+      border-color: #a855f7;
+    }
+    
+    .dim-hex.expanded {
+      transform: scale(1.15);
+      box-shadow: 0 0 60px #a855f744, inset 0 0 30px #a855f733;
+      border-color: #a855f7;
+    }
+    
+    .dim-hex svg {
+      width: 32px;
+      height: 32px;
+      stroke: #a855f7;
+      fill: none;
+      stroke-width: 1.8;
+      transition: transform 0.3s ease;
+    }
+    
+    .dim-hex:hover svg {
+      transform: scale(1.1);
+    }
+    
+    .dim-hex .hex-glow {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 40%, #a855f722, transparent 70%);
+      clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .dim-hex:hover .hex-glow {
+      opacity: 1;
+    }
+    
+    .dim-hex .hex-label {
+      position: absolute;
+      bottom: -28px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #a855f7;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      white-space: nowrap;
+      font-weight: 600;
+    }
+    
+    .dim-hex:hover .hex-label {
+      opacity: 1;
+    }
+    
+    .dim-hex.expanded .hex-label {
+      opacity: 1;
+    }
+    
+    /* ===== HEADER CON HEXÁGONO ===== */
+    .dim-header-with-hex {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 16px;
+    }
+    
+    @media (max-width: 600px) {
+      .dim-header-with-hex {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      .dim-hex {
+        width: 64px;
+        height: 64px;
+      }
+      .dim-hex svg {
+        width: 26px;
+        height: 26px;
+      }
+      .dim-hex .hex-label {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- VIDEO DE FONDO -->
+  <video class="dim-hero-video" muted loop playsinline preload="none">
+    <source src="assets/clip/OSTP-DIM03.mp4" type="video/mp4">
+  </video>
+  <img class="fallback-img" src="assets/img/OSTP-DIM03.png" alt="Automatización" aria-hidden="true">
+
+  <!-- HEADER -->
+  <header class="global-header">
+    <object type="image/svg+xml" data="assets/icon/logo-ostp-hex.svg" id="OFICIAL-LOGO" aria-label="OSTP Logo"></object>
+    <nav aria-label="Navegación principal">
+      <a href="service.html" class="nav-link">← Catálogo</a>
+      <a href="index.html" class="nav-link">Explorar</a>
+    </nav>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="dim-card-container" id="dim-root">
+    
+    <!-- Badge + Ícono Hexágono -->
+    <div class="dim-header-with-hex">
+      <div class="dim-hex" id="dimHex-03" onclick="toggleHex(this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07M8.46 8.46a5 5 0 0 0 0 7.07"/></svg>
+        <div class="hex-glow"></div>
+        <span class="hex-label">DIM 03</span>
+      </div>
+      <div>
+        <span class="badge">DIM 03</span>
+      </div>
+    </div>
+
+    <!-- Título con efecto glitch -->
+    <h1 class="dim-title glitch" id="dim-title" data-text="Automatización">Automatización</h1>
+
+    <!-- Subtítulo -->
+    <p class="dim-subtitle" id="dim-subtitle">WhatsApp bot y flujos de trabajo inteligentes que trabajan 24/7.</p>
+
+    <!-- Grid de contenido -->
+    <section class="dim-content-grid">
+
+      <!-- Descripción -->
+      <div class="dim-section">
+        <h2 class="dim-section-title">Descripción</h2>
+        <p class="dim-description" id="dim-desc">WhatsApp bot y flujos de trabajo inteligentes que trabajan 24/7.</p>
+      </div>
+
+      <!-- Features -->
+      <div class="dim-section">
+        <h2 class="dim-section-title">Incluye</h2>
+        <ul class="feature-list" id="dim-features">
+          <li class='feature-item'><span class='feature-check'>✓</span> Chatbot WhatsApp Business API</li>
+          <li class='feature-item'><span class='feature-check'>✓</span> Integraciones CRM (HubSpot, Salesforce, etc.)</li>
+          <li class='feature-item'><span class='feature-check'>✓</span> Notificaciones automáticas personalizadas</li>
+          <li class='feature-item'><span class='feature-check'>✓</span> Flujos de trabajo personalizados</li>
+          <li class='feature-item'><span class='feature-check'>✓</span> Respuestas automáticas a preguntas frecuentes</li>
+          <li class='feature-item'><span class='feature-check'>✓</span> Segmentación de contactos</li>
+        </ul>
+      </div>
+
+      <!-- Pricing & Delivery -->
+      <div class="dim-section dim-section--highlight">
+        <div class="pricing-box">
+          <span class="pricing-label">Inversión</span>
+          <span class="pricing-amount" id="dim-price">Desde $8,000 MXN</span>
+        </div>
+        <div class="delivery-box">
+          <span class="delivery-label">Entrega</span>
+          <span class="delivery-time" id="dim-delivery">3-5 semanas</span>
+        </div>
+      </div>
+
+      <!-- Garantía -->
+      <div class="dim-section">
+        <div class="guarantee-box">
+          <span class="guarantee-icon">✓</span>
+          <p class="guarantee-text" id="dim-guarantee"><strong>Garantía OSTP:</strong> Reducción del 50% en tiempo de respuesta o te devolvemos el 30%.</p>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- CTA -->
+    <div class="dim-cta-wrapper">
+      <a href="flow/form.html?dim=03" class="btn btn--primary" id="cta-agendar">
+        <i class="fas fa-calendar-check" aria-hidden="true"></i> Agendar diagnóstico
+      </a>
+      <p class="cta-hint">Responde <strong>"DIM03"</strong> para iniciar</p>
+    </div>
+
+    <!-- Hashtags -->
+    <div class="dim-tags">
+      <span class='tag'>#Automatización</span>
+      <span class='tag'>#WhatsAppBot</span>
+      <span class='tag'>#OSTP</span>
+      <span class='tag'>#echoShift</span>
+      <span class='tag'>#Productividad</span>
+      <span class='tag'>#IA</span>
+    </div>
+
+  </main>
+
+  <!-- NAVEGACIÓN CONTEXTUAL -->
+  <nav class="dim-nav">
+    <a href="dim02.html" class="nav-link">← Anterior</a>
+    <span class="nav-link" style="color:var(--ostp-text-muted)">DIM 03 de 08</span>
+    <a href="dim04.html" class="nav-link nav-link--next">Siguiente →</a>
+  </nav>
+
+  <!-- SCRIPTS -->
+  <script src="../../assets/js/main.js" defer></script>
+  <script>
+    function toggleHex(el) {
+      // Remover expansión de otros hexágonos
+      document.querySelectorAll('.dim-hex').forEach(h => h.classList.remove('expanded'));
+      // Toggle en el actual
+      if (el.classList.contains('expanded')) {
+        el.classList.remove('expanded');
+      } else {
+        el.classList.add('expanded');
+        // Auto-colapsar después de 3 segundos
+        setTimeout(() => {
+          el.classList.remove('expanded');
+        }, 3000);
+      }
+    }
+  </script>
+</body>
+</html>

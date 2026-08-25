@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FNG | Validación y Certificación</title>
+    <style>
+        /* --- ESTILOS GENERALES Y UI DEL FORMULARIO --- */
+        :root {
+            --fng-black: #1A1A1A;
+            --fng-gold: #C9A961;
+            --fng-cream: #F5F0E6;
+            --font-serif: 'Georgia', 'Times New Roman', serif;
+        }
+
+        body { font-family: var(--font-serif); background: #e0e0e0; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        
+        .ui-panel { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 500px; width: 100%; margin-bottom: 30px; }
+        .ui-panel h2 { color: var(--fng-black); border-bottom: 2px solid var(--fng-gold); padding-bottom: 10px; margin-top: 0; }
+        
+        label { display: block; margin-top: 15px; font-weight: bold; font-size: 0.9rem; color: #555; }
+        input, select { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; font-family: sans-serif; box-sizing: border-box; }
+        
+        button { background: var(--fng-black); color: var(--fng-gold); border: none; padding: 12px 20px; margin-top: 25px; cursor: pointer; font-weight: bold; letter-spacing: 1px; width: 100%; transition: 0.3s; }
+        button:hover { background: var(--fng-gold); color: var(--fng-black); }
+
+        /* --- DISEÑO DEL CERTIFICADO (VISUALIZACIÓN EN PANTALLA) --- */
+        #certificate-preview {
+            width: 1123px; /* A4 Landscape aprox pixels @ 96dpi */
+            height: 794px;
+            background-color: var(--fng-cream);
+            position: relative;
+            padding: 60px;
+            box-sizing: border-box;
+            border: 20px double var(--fng-black);
+            text-align: center;
+            color: var(--fng-black);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: none; /* Oculto hasta generar */
+        }
+
+        .cert-header { font-size: 1.2rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 10px; }
+        .cert-title { font-size: 4.5rem; font-weight: bold; margin: 20px 0; font-variant: small-caps; }
+        .cert-subtitle { font-size: 1.5rem; font-style: italic; margin-bottom: 40px; color: #555; }
+        
+        .cert-body { font-size: 1.3rem; line-height: 1.8; margin: 0 80px; text-align: justify; }
+        .cert-highlight { font-weight: bold; font-size: 1.6rem; display: block; margin: 20px 0; color: var(--fng-black); border-bottom: 1px solid var(--fng-gold); padding-bottom: 5px; }
+        
+        .cert-footer { margin-top: 60px; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 60px; }
+        .signature-block { text-align: center; }
+        .sig-line { width: 250px; border-bottom: 2px solid var(--fng-black); margin: 0 auto 10px auto; }
+        .sig-name { font-weight: bold; font-size: 1.1rem; }
+        .sig-role { font-size: 0.9rem; font-style: italic; color: #666; }
+        
+        .qr-container { width: 120px; height: 120px; border: 2px solid var(--fng-black); padding: 5px; background: white; }
+        .qr-img { width: 100%; height: 100%; object-fit: contain; }
+
+        .cert-id { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); font-size: 0.8rem; letter-spacing: 2px; color: #888; }
+        .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.05; width: 400px; pointer-events: none; z-index: 0; }
+
+        /* --- MODO IMPRESIÓN / GENERACIÓN PDF --- */
+        @media print {
+            body * { visibility: hidden; }
+            .ui-panel { display: none !important; }
+            #certificate-preview, #certificate-preview * { 
+                visibility: visible; 
+                display: block !important; 
+            }
+            #certificate-preview {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 40px;
+                border: 10px double var(--fng-black);
+                box-shadow: none;
+                page-break-after: always;
+            }
+            .cert-footer { display: flex !important; }
+            /* Forzar colores de fondo e imagen */
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- PANEL DE CONTROL -->
+    <div class="ui-panel">
+        <h2>️ Emisor de Certificados FNG</h2>
+        <label>Nombre de la Empresa / Titular</label>
+        <input type="text" id="inp-company" placeholder="Ej. Tech Solutions MX S.A." required>
+        
+        <label>Categoría Certificada</label>
+        <select id="inp-category">
+            <option value="Manufactura Digital">Manufactura Digital / Software</option>
+            <option value="Desarrollo Android">Desarrollo Android Nativo</option>
+            <option value="Infraestructura Web">Infraestructura Web & Cloud</option>
+            <option value="Calidad Operativa">Excelencia Operativa ISO-FNG</option>
+        </select>
+
+        <button onclick="generateCertificate()">GENERAR Y VALIDAR CERTIFICADO</button>
+        <p style="font-size: 0.8rem; color: #888; margin-top: 10px;">* Al hacer clic, se registrará en la base local y se abrirá la vista de impresión para guardar como PDF.</p>
+    </div>
+
+    <!-- CERTIFICADO VISUAL -->
+    <div id="certificate-preview">
+        <!-- Marca de agua SVG inline del emblema FNG -->
+        <svg class="watermark" viewBox="0 0 100 100" fill="#000">
+            <circle cx="50" cy="50" r="48" stroke="black" stroke-width="2" fill="none"/>
+            <text x="50" y="55" text-anchor="middle" font-size="20" font-weight="bold">FNG</text>
+        </svg>
+
+        <div class="cert-header">República Tecnológica de México · For Nation Good</div>
+        <div class="cert-title">Certificado de Excelencia</div>
+        <div class="cert-subtitle">Sello de Garantía Institucional · Reg. Trademark</div>
+
+        <div class="cert-body">
+            Por medio del presente documento, y en ejercicio de las facultades conferidas por el Foundation Main Manifest de fecha 1° de enero de 2026, la Fundación For Nation Good certifica que:
+            
+            <span class="cert-highlight" id="out-company">[NOMBRE DE LA EMPRESA]</span>
+            
+            Ha complementado satisfactoriamente los estándares de calidad en el producto o servicio derivados de su mano de obra o manufactura bajo la categoría:
+            
+            <span class="cert-highlight" id="out-category" style="font-size: 1.3rem; border:none;">[CATEGORÍA]</span>
+            
+            Otorgándosele el presente sello como constancia de validez ante la comunidad tecnológica nacional e internacional.
+        </div>
+
+        <div class="cert-footer">
+            <div class="signature-block">
+                <div class="sig-line"></div>
+                <div class="sig-name">CAO Ing. Salvador Trujillo</div>
+                <div class="sig-role">Custodio de Calidad FNG · Firma Electrónica Virtual</div>
+            </div>
+            
+            <div class="qr-container">
+                <!-- El QR se inyectará aquí vía JS -->
+                <img id="qr-code" class="qr-img" src="" alt="QR Validación">
+            </div>
+        </div>
+
+        <div class="cert-id" id="out-id">ID: FNG-2026-000000</div>
+    </div>
+
+    <script>
+        function generateCertificate() {
+            const company = document.getElementById('inp-company').value.trim();
+            const category = document.getElementById('inp-category').value;
+            
+            if(!company) { alert("Por favor ingrese el nombre de la empresa."); return; }
+
+            // 1. Generar ID Único (Simulación de registro en SQLite)
+            const timestamp = new Date().getTime().toString(36).toUpperCase();
+            const randomHash = Math.random().toString(36).substring(2, 6).toUpperCase();
+            const certId = `FNG-${new Date().getFullYear()}-${timestamp}-${randomHash}`;
+            
+            // NOTA PARA AGENTE RIDER: 
+            // Aquí iría tu llamada fetch() a tu backend PHP/Node para insertar en SQLite:
+            // fetch('/api/register-cert', { method: 'POST', body: JSON.stringify({id: certId, company, category}) });
+
+            // 2. Actualizar DOM del Certificado
+            document.getElementById('out-company').innerText = company.toUpperCase();
+            document.getElementById('out-category').innerText = category.toUpperCase();
+            document.getElementById('out-id').innerText = `ID DE VALIDACIÓN: ${certId}`;
+
+            // 3. Generar QR Dinámico apuntando a tu validador online
+            const validationUrl = `https://ostp-echoshift.com/certify.html?validate=${certId}`;
+            const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(validationUrl)}&color=1A1A1A&bgcolor=F5F0E6`;
+            document.getElementById('qr-code').src = qrApi;
+
+            // 4. Mostrar y Lanzar Impresión (Generación de PDF nativa)
+            const certPreview = document.getElementById('certificate-preview');
+            certPreview.style.display = 'block';
+            
+            setTimeout(() => {
+                window.print(); 
+                // Opcional: Ocultar después de imprimir para mantener la UI limpia
+                // certPreview.style.display = 'none'; 
+            }, 500);
+        }
+    </script>
+</body>
+</html>

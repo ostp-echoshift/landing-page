@@ -1,0 +1,107 @@
+{
+  "name": "OSTP @echoShift",
+  "version": "2.0",
+  "description": "Sistemas digitales de alto impacto para PyMEs",
+  "domain": "www.ostp-echoshift.com",
+  "contact": {
+    "whatsapp": "+523317575573",
+    "email": "ostp.echoshift@gmail.com",
+    "location": "Zapopan, Jalisco, México"
+  },
+  "social": {
+    "facebook": "https://facebook.com/ostp-echoshift",
+    "github": "https://github.com/ostp-echoshift",
+    "linkedin": "https://linkedin.com/company/ostp-echoshift"
+  },
+  "methodology": {
+    "name": "Leviatán",
+    "version": "2.0",
+    "levels": ["ROOT", "MAIN", "GRAND", "MAJOR", "MAINOR", "MINI"]
+  },
+  "dimensions": [
+    {
+      "id": "01",
+      "title": "Desarrollo Web",
+      "slug": "desarrollo-web",
+      "price": "$4,500 MXN",
+      "delivery": "2-3 semanas",
+      "category": "web"
+    },
+    {
+      "id": "02",
+      "title": "Embudos de Venta",
+      "slug": "embudos",
+      "price": "$6,000 MXN",
+      "delivery": "3-4 semanas",
+      "category": "marketing"
+    },
+    {
+      "id": "03",
+      "title": "Automatización",
+      "slug": "automatizacion",
+      "price": "$8,000 MXN",
+      "delivery": "3-5 semanas",
+      "category": "automation"
+    },
+    {
+      "id": "04",
+      "title": "Branding Digital",
+      "slug": "ia-chatbots",
+      "price": "$5,500 MXN",
+      "delivery": "2-4 semanas",
+      "category": "branding"
+    },
+    {
+      "id": "05",
+      "title": "Software POS",
+      "slug": "analitica",
+      "price": "$12,000 MXN",
+      "delivery": "1-2 semanas",
+      "category": "software"
+    },
+    {
+      "id": "06",
+      "title": "Apps Móviles",
+      "slug": "seguridad",
+      "price": "$15,000 MXN",
+      "delivery": "6-8 semanas",
+      "category": "mobile"
+    },
+    {
+      "id": "07",
+      "title": "Consultoría Leviatán",
+      "slug": "soporte",
+      "price": "$10,000 MXN",
+      "delivery": "48hrs diagnóstico",
+      "category": "consulting"
+    },
+    {
+      "id": "08",
+      "title": "Infraestructura Digital",
+      "slug": "infraestructura",
+      "price": "$3,500 MXN/mes",
+      "delivery": "1 semana",
+      "category": "infra"
+    }
+  ],
+  "api": {
+    "webhookUrl": "REEMPLAZAR_CON_WEBHOOK_REAL",
+    "debugMode": true,
+    "otp_ttl": 15
+  },
+  "timers": {
+    "landing": {
+      "limit": 300,
+      "alertAt": 60,
+      "strict": true
+    },
+    "form": {
+      "otpLimit": 900
+    }
+  },
+  "assets": {
+    "clip": "assets/clip/",
+    "img": "assets/img/",
+    "icon": "assets/icon/"
+  }
+}

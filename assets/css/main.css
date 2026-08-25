@@ -1,0 +1,25 @@
+/* =============================================================================
+   main.css — OSTP @echoShift v2.0
+   Punto de entrada: importa todos los estilos en orden jerárquico
+   ============================================================================= */
+
+/* 1. Tokens (variables) */
+@import "00-tokens.css";
+
+/* 2. Base (reset + utilidades) */
+@import "01-base.css";
+
+/* 3. Componentes (navbar, footer, buttons, cards, forms) */
+@import "02-components.css";
+
+/* 4. Layouts (grids específicos) */
+@import "03-layouts.css";
+
+/* 5. Animaciones (glitch, neon, amorphous) */
+@import "04-animations.css";
+
+/* 6. Landing / Flujo (navegación específica) */
+@import "05-landing-styles.css";
+
+/* 7. Neon Logo */
+@import "06-neon-logo.css";

@@ -1,0 +1,101 @@
+/* =============================================================================
+   01-base.css — Reset, base y utilidades
+   Normalización, tipografía base, utilidades comunes
+   ============================================================================= */
+
+/* ===== RESET ===== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--ostp-bg);
+  color: var(--ostp-text);
+  line-height: 1.6;
+  overflow-x: hidden;
+  min-height: 100vh;
+  position: relative;
+}
+
+img, svg, video, canvas {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: var(--ostp-cyan);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--ostp-cyan);
+}
+
+/* ===== UTILIDADES ===== */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--ostp-cyan), var(--ostp-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-border {
+  border: 1px solid transparent;
+  background-image: linear-gradient(var(--ostp-bg), var(--ostp-bg)), 
+                    linear-gradient(135deg, var(--ostp-cyan), var(--ostp-purple));
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--ostp-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ostp-border);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ostp-cyan-dim);
+}
+
+/* ===== SELECTION ===== */
+::selection {
+  background: var(--ostp-cyan-dim);
+  color: var(--ostp-cyan);
+}

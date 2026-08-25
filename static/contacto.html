@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contacto — OSTP @echoShift</title>
+  <meta name="description" content="Contacta a OSTP @echoShift. WhatsApp, correo y formulario directo al operador."/>
+  <link rel="icon" type="image/svg+xml" href="../assets/icon/logo-ostp-hex.svg"/>
+  <link rel="stylesheet" href="../../assets/css/main.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    /* ===== AMORPHOUS GRAPH ===== */
+    #amorphous-graph {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+    
+    .hero, .contact-wrap, .pay-wrap, .thanks-container, 
+    .form-container, .error-container, .catalog-hero, 
+    .catalog-grid, .catalog-guarantee, .catalog-cta,
+    .section, .stats-section, .footer-grid {
+      position: relative;
+      z-index: 1;
+    }
+
+    .contact-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      min-height: calc(100vh - 72px);
+      margin-top: 72px;
+    }
+    .contact-left {
+      padding: 72px 48px;
+      background: var(--c-bg-card);
+      border-right: 1px solid var(--c-border);
+      display: flex;
+      flex-direction: column;
+    }
+    .contact-left h2 { margin-bottom: 8px; }
+    .contact-left > p { font-size: 1rem; color: var(--c-text-dim); margin-bottom: 48px; line-height: 1.7; }
+    .contact-channels { display: flex; flex-direction: column; gap: 16px; margin-bottom: 48px; }
+    .contact-channel {
+      display: flex; align-items: center; gap: 16px;
+      padding: 20px;
+      background: var(--c-bg);
+      border: 1px solid var(--c-border);
+      border-radius: var(--radius-lg);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+    .contact-channel:hover { border-color: var(--c-border-hot); transform: translateX(4px); }
+    .ch-icon {
+      width: 44px; height: 44px; min-width: 44px;
+      border: 1px solid var(--c-border);
+      border-radius: var(--radius);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+      color: var(--c-cyan);
+      transition: var(--transition);
+    }
+    .contact-channel:hover .ch-icon { border-color: var(--c-cyan); background: rgba(0,240,255,0.08); }
+    .ch-label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--c-text-mute);
+      margin-bottom: 4px;
+    }
+    .ch-value { font-size: 0.95rem; color: var(--c-text); font-weight: 500; }
+
+    .response-box {
+      background: linear-gradient(135deg, rgba(0,240,255,0.04), rgba(123,46,218,0.04));
+      border: 1px solid var(--c-border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-top: auto;
+    }
+    .response-box-title {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--c-text-dim);
+      margin-bottom: 8px;
+    }
+    .response-times { display: flex; flex-direction: column; gap: 8px; }
+    .rt-item {
+      display: flex; justify-content: space-between;
+      font-size: 0.85rem; color: var(--c-text-dim);
+    }
+    .rt-item span:last-child { color: var(--c-cyan); font-family: var(--font-mono); font-size: 0.8rem; }
+
+    .contact-right { padding: 72px 48px; background: var(--c-bg); }
+    .contact-right h3 { font-size: 1.3rem; margin-bottom: 6px; }
+    .contact-right > p { color: var(--c-text-dim); font-size: 0.9rem; margin-bottom: 36px; }
+    .contact-form .grid-2 { gap: 16px; }
+    .contact-form .form-group { margin-bottom: 16px; }
+    .submit-area { margin-top: 8px; }
+    .form-note {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--c-text-mute);
+      margin-top: 12px;
+      letter-spacing: 0.5px;
+    }
+
+    .form-success {
+      display: none;
+      text-align: center;
+      padding: 60px 20px;
+    }
+    .form-success.active { display: block; animation: fadeUp 0.5s ease both; }
+    .success-icon {
+      width: 64px; height: 64px;
+      background: rgba(0,255,157,0.1);
+      border: 1px solid rgba(0,255,157,0.3);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem;
+      color: #00ff9d;
+      margin: 0 auto 20px;
+    }
+
+    /* ===== REDES SOCIALES ===== */
+    .social-links {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+    .social-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      background: var(--c-bg);
+      border: 1px solid var(--c-border);
+      border-radius: var(--radius);
+      text-decoration: none;
+      color: var(--c-text);
+      font-size: 0.85rem;
+      transition: var(--transition);
+    }
+    .social-link:hover {
+      border-color: var(--c-cyan);
+      transform: translateY(-2px);
+      background: rgba(0,240,255,0.05);
+    }
+    .social-link i { font-size: 1.1rem; }
+
+    /* ===== MAPA ===== */
+    .map-container {
+      margin-top: 16px;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      border: 1px solid var(--c-border);
+    }
+    .map-container iframe {
+      width: 100%;
+      height: 200px;
+      border: none;
+      display: block;
+    }
+
+    @media(max-width:900px) {
+      .contact-wrap { grid-template-columns: 1fr; }
+      .contact-left { border-right: none; border-bottom: 1px solid var(--c-border); padding: 40px 24px; }
+      .contact-right { padding: 40px 24px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- ===== AMORPHOUS GRAPH ===== -->
+  <canvas id="amorphous-graph"></canvas>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="../index.html" class="navbar-logo">
+        <img src="../assets/icon/logo-ostp-hex.svg" alt="OSTP"/>
+        OSTP <span class="brand-echo">@echoShift</span>
+      </a>
+      <ul class="navbar-nav">
+        <li><a href="../index.html">Inicio</a></li>
+        <li><a href="../service.html">Servicios</a></li>
+        <li><a href="nosotros.html">Nosotros</a></li>
+        <li><a href="contacto.html">Contacto</a></li>
+      </ul>
+      <a href="../index.html" class="navbar-cta">Diagnóstico gratis</a>
+      <div class="hamburger"><span></span><span></span><span></span></div>
+    </div>
+  </nav>
+
+  <!-- ===== CONTACTO WRAP ===== -->
+  <div class="contact-wrap">
+    <!-- LEFT -->
+    <div class="contact-left">
+      <h2>Hablemos<br/><span class="gradient-text">directo.</span></h2>
+      <p>Sin formularios que desaparecen en el vacío. El mensaje llega al operador — con nombre, apellido y ganas de trabajar.</p>
+
+      <!-- ===== CANALES ===== -->
+      <div class="contact-channels">
+        <!-- WhatsApp -->
+        <a href="https://wa.me/523317575573?text=Hola, quiero información sobre OSTP @echoShift" class="contact-channel" target="_blank">
+          <div class="ch-icon"><i class="fab fa-whatsapp"></i></div>
+          <div>
+            <div class="ch-label">WhatsApp</div>
+            <div class="ch-value">33 1757 5573</div>
+          </div>
+        </a>
+        <!-- Email -->
+        <a href="mailto:ostp.echoshift@gmail.com" class="contact-channel">
+          <div class="ch-icon"><i class="far fa-envelope"></i></div>
+          <div>
+            <div class="ch-label">Correo electrónico</div>
+            <div class="ch-value">ostp.echoshift@gmail.com</div>
+          </div>
+        </a>
+        <!-- Agenda (paypage.html) -->
+        <a href="../flow/paypage.html" class="contact-channel">
+          <div class="ch-icon"><i class="fas fa-calendar-check"></i></div>
+          <div>
+            <div class="ch-label">Agendar sesión</div>
+            <div class="ch-value">Consultoría Leviatán — $1,500 MXN</div>
+          </div>
+        </a>
+      </div>
+
+      <!-- ===== REDES SOCIALES ===== -->
+      <div style="margin-bottom: 24px;">
+        <div class="ch-label" style="margin-bottom: 8px;">Síguenos</div>
+        <div class="social-links">
+          <a href="https://facebook.com/ostp-echoshift" class="social-link" target="_blank"><i class="fab fa-facebook-f"></i> Facebook</a>
+          <a href="https://github.com/ostp-echoshift" class="social-link" target="_blank"><i class="fab fa-github"></i> GitHub</a>
+          <a href="https://linkedin.com/company/ostp-echoshift" class="social-link" target="_blank"><i class="fab fa-linkedin-in"></i> LinkedIn</a>
+        </div>
+      </div>
+
+      <!-- ===== MAPA GOOGLE ===== -->
+      <div style="margin-bottom: 24px;">
+        <div class="ch-label" style="margin-bottom: 8px;">Ubicación</div>
+        <div class="map-container">
+          <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3732.456!2d-103.345!3d20.675!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8428b1f0b8b0b0b%3A0x0!2zMjDCsDQwJzI2LjAiTiAxMDPCsDIwJzQyLjAiVw!5e0!3m2!1ses!2smx!4v1700000000000" 
+            allowfullscreen="" 
+            loading="lazy" 
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+        </div>
+      </div>
+
+      <!-- ===== TIEMPOS DE RESPUESTA ===== -->
+      <div class="response-box">
+        <div class="response-box-title">Tiempos de respuesta típicos</div>
+        <div class="response-times">
+          <div class="rt-item"><span>WhatsApp</span><span>~2 horas</span></div>
+          <div class="rt-item"><span>Correo</span><span>~24 horas</span></div>
+          <div class="rt-item"><span>Formulario</span><span>~12 horas</span></div>
+          <div class="rt-item"><span>Propuesta formal</span><span>48 horas</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="contact-right">
+      <h3>Formulario de <span class="gradient-text">contacto</span></h3>
+      <p>Cuéntanos sobre tu negocio y lo que necesitas. Si aplica, te mandamos propuesta en 48 horas.</p>
+
+      <!-- ===== FORMULARIO ===== -->
+      <div id="contact-form-wrap">
+        <form class="contact-form" onsubmit="submitContact(event)">
+          <div class="grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <div class="form-group">
+              <label class="form-label">Nombre</label>
+              <input type="text" class="form-input" id="c-nombre" placeholder="Tu nombre" required/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Apellido</label>
+              <input type="text" class="form-input" id="c-apellido" placeholder="Tu apellido"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">WhatsApp</label>
+            <input type="tel" class="form-input" id="c-wa" placeholder="33 #### ####" required/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Correo electrónico</label>
+            <input type="email" class="form-input" id="c-email" placeholder="tu@empresa.com"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nombre del negocio</label>
+            <input type="text" class="form-input" id="c-negocio" placeholder="Mi empresa"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">¿Qué necesitas?</label>
+            <select class="form-select" id="c-servicio">
+              <option value="">— ¿En qué te podemos ayudar? —</option>
+              <option value="web">Desarrollo Web</option>
+              <option value="funnel">Embudo de ventas</option>
+              <option value="automatizacion">Automatización / WhatsApp Bot</option>
+              <option value="branding">Branding e identidad</option>
+              <option value="pos">Software POS</option>
+              <option value="app">App Android</option>
+              <option value="consultoria">Consultoría Leviatán</option>
+              <option value="infra">Infraestructura digital</option>
+              <option value="full">Pipeline completo</option>
+              <option value="otro">Otro / No sé todavía</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Cuéntanos más</label>
+            <textarea class="form-textarea" id="c-mensaje" placeholder="Describe tu situación actual, qué necesitas y cuándo lo necesitas. Mientras más detalle, mejor propuesta." rows="5"></textarea>
+          </div>
+
+          <!-- ===== BOTONES ===== -->
+          <div class="submit-area">
+            <button type="submit" class="btn btn-primary btn-lg" style="width:100%">
+              <i class="fas fa-paper-plane"></i> Enviar mensaje
+            </button>
+
+            <!-- Botones adicionales -->
+            <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
+              <a href="../flow/agenda.html" class="btn btn-outline" style="flex:1;text-align:center;">
+                <i class="fas fa-calendar-alt"></i> Agenda
+              </a>
+              <a href="mailto:ostp.echoshift@gmail.com?subject=Contacto%20OSTP" class="btn btn-outline" style="flex:1;text-align:center;">
+                <i class="fas fa-envelope"></i> Email
+              </a>
+              <a href="https://wa.me/523317575573" class="btn btn-outline" style="flex:1;text-align:center;" target="_blank">
+                <i class="fab fa-whatsapp"></i> WhatsApp
+              </a>
+            </div>
+
+            <p class="form-note">Tu información no se comparte con terceros. Solo el operador lee esto.</p>
+          </div>
+        </form>
+      </div>
+
+      <!-- ===== SUCCESS ===== -->
+      <div class="form-success" id="form-success">
+        <div class="success-icon"><i class="fas fa-check"></i></div>
+        <h3 style="margin-bottom:8px">¡Mensaje recibido!</h3>
+        <p style="margin-bottom:28px;max-width:360px;margin-left:auto;margin-right:auto">Te contactamos en las próximas horas. Si es urgente, escríbenos directo por WhatsApp.</p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+          <a href="https://wa.me/523317575573" class="btn btn-outline" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+          <a href="../flow/paypage.html" class="btn btn-primary"><i class="fas fa-calendar"></i> Agendar asesoría</a>
+          <a href="../index.html" class="btn btn-outline"><i class="fas fa-home"></i> Inicio</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SCRIPTS ===== -->
+  <script>
+    function submitContact(e) {
+      e.preventDefault();
+      const d = {
+        nombre: document.getElementById('c-nombre').value,
+        apellido: document.getElementById('c-apellido').value,
+        wa: document.getElementById('c-wa').value,
+        email: document.getElementById('c-email').value,
+        negocio: document.getElementById('c-negocio').value,
+        servicio: document.getElementById('c-servicio').value,
+        mensaje: document.getElementById('c-mensaje').value
+      };
+      
+      console.log('📩 Datos del contacto:', d);
+      
+      document.getElementById('contact-form-wrap').style.display = 'none';
+      document.getElementById('form-success').classList.add('active');
+    }
+  </script>
+
+  <script>
+    // ===== AMORPHOUS GRAPH =====
+    class AmorphousGraph {
+      constructor(canvasId, config = {}) {
+        this.canvas = document.getElementById(canvasId);
+        if (!this.canvas) return;
+        this.ctx = this.canvas.getContext('2d');
+        this.config = {
+          particleCount: config.particleCount || 50,
+          connectionRadius: config.connectionRadius || 140,
+          particleRadius: config.particleRadius || 2.5,
+          speed: config.speed || 0.4,
+          color: config.color || 'rgba(0,240,255,',
+          ...config
+        };
+        this.particles = [];
+        this.mouse = { x: null, y: null, radius: 150 };
+        this.resize();
+        this.init();
+        this.animate();
+        window.addEventListener('resize', () => this.resize());
+        window.addEventListener('mousemove', (e) => this.handleMouse(e));
+        window.addEventListener('mouseleave', () => {
+          this.mouse.x = null;
+          this.mouse.y = null;
+        });
+      }
+
+      resize() {
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        if (this.canvas.width !== w || this.canvas.height !== h) {
+          this.canvas.width = w;
+          this.canvas.height = h;
+          this.init();
+        }
+      }
+
+      handleMouse(e) {
+        const r = this.canvas.getBoundingClientRect();
+        this.mouse.x = e.clientX - r.left;
+        this.mouse.y = e.clientY - r.top;
+      }
+
+      init() {
+        this.particles = [];
+        for (let i = 0; i < this.config.particleCount; i++) {
+          this.particles.push({
+            x: Math.random() * this.canvas.width,
+            y: Math.random() * this.canvas.height,
+            vx: (Math.random() - 0.5) * this.config.speed,
+            vy: (Math.random() - 0.5) * this.config.speed,
+            radius: Math.random() * 0.8 + this.config.particleRadius * 0.6
+          });
+        }
+      }
+
+      drawParticle(p) {
+        this.ctx.beginPath();
+        this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        this.ctx.fillStyle = this.config.color + '0.8)';
+        this.ctx.fill();
+      }
+
+      drawConnection(p1, p2) {
+        const dx = p1.x - p2.x;
+        const dy = p1.y - p2.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < this.config.connectionRadius) {
+          this.ctx.beginPath();
+          this.ctx.moveTo(p1.x, p1.y);
+          this.ctx.lineTo(p2.x, p2.y);
+          const o = 1 - dist / this.config.connectionRadius;
+          this.ctx.strokeStyle = this.config.color + (o * 0.35) + ')';
+          this.ctx.lineWidth = 0.6;
+          this.ctx.stroke();
+        }
+      }
+
+      updateParticle(p) {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > this.canvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > this.canvas.height) p.vy *= -1;
+        if (this.mouse.x !== null) {
+          const dx = p.x - this.mouse.x;
+          const dy = p.y - this.mouse.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < this.mouse.radius) {
+            const f = (this.mouse.radius - dist) / this.mouse.radius;
+            p.vx += dx * f * 0.02;
+            p.vy += dy * f * 0.02;
+          }
+        }
+      }
+
+      animate() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        for (let i = 0; i < this.particles.length; i++) {
+          for (let j = i + 1; j < this.particles.length; j++) {
+            this.drawConnection(this.particles[i], this.particles[j]);
+          }
+        }
+        for (const p of this.particles) {
+          this.updateParticle(p);
+          this.drawParticle(p);
+        }
+        requestAnimationFrame(() => this.animate());
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (document.getElementById('amorphous-graph')) {
+        new AmorphousGraph('amorphous-graph', {
+          particleCount: 50,
+          connectionRadius: 140,
+          speed: 0.4,
+          color: 'rgba(0,240,255,'
+        });
+      }
+    });
+  </script>
+</body>
+</html>

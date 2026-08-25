@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+  <meta property="og:title" content="DIM 08 / OSTP @echoShift">  <meta property="og:description" content="Infraestructura cloud con CI/CD, monitoreo 24/7 y 99.9% uptime garantizado.">  <meta property="og:type" content="website">  <meta name="twitter:card" content="summary_large_image">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DIM 08 / Infraestructura Digital | OSTP @echoShift</title>
+  <meta name="description" content="Infraestructura cloud con CI/CD, monitoreo 24/7 y 99.9% uptime garantizado.">
+  <link rel="icon" type="image/svg+xml" href="assets/icon/logo-ostp-hex.svg">
+  <link rel="stylesheet" href="../../assets/css/main.css">
+  <style>
+    /* ===== HEXÁGONO DINÁMICO PARA DIM PAGE ===== */
+    .dim-hex {
+      width: 80px;
+      height: 80px;
+      clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(6, 6, 10, 0.9);
+      backdrop-filter: blur(4px);
+      border: 2px solid #14b8a6;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      cursor: pointer;
+      margin-bottom: 20px;
+      position: relative;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    }
+    
+    .dim-hex:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 40px #14b8a633, inset 0 0 20px #14b8a622;
+      border-color: #14b8a6;
+    }
+    
+    .dim-hex.expanded {
+      transform: scale(1.15);
+      box-shadow: 0 0 60px #14b8a644, inset 0 0 30px #14b8a633;
+      border-color: #14b8a6;
+    }
+    
+    .dim-hex svg {
+      width: 32px;
+      height: 32px;
+      stroke: #14b8a6;
+      fill: none;
+      stroke-width: 1.8;
+      transition: transform 0.3s ease;
+    }
+    
+    .dim-hex:hover svg {
+      transform: scale(1.1);
+    }
+    
+    .dim-hex .hex-glow {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 40%, #14b8a622, transparent 70%);
+      clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .dim-hex:hover .hex-glow {
+      opacity: 1;
+    }
+    
+    .dim-hex .hex-label {
+      position: absolute;
+      bottom: -28px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #14b8a6;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      white-space: nowrap;
+      font-weight: 600;
+    }
+    
+    .dim-hex:hover .hex-label {
+      opacity: 1;
+    }
+    
+    .dim-hex.expanded .hex-label {
+      opacity: 1;
+    }
+    
+    /* ===== HEADER CON HEXÁGONO ===== */
+    .dim-header-with-hex {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 16px;
+    }
+    
+    @media (max-width: 600px) {
+      .dim-header-with-hex {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      .dim-hex {
+        width: 64px;
+        height: 64px;
+      }
+      .dim-hex svg {
+        width: 26px;
+        height: 26px;
+      }
+      .dim-hex .hex-label {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- VIDEO DE FONDO -->
+  <video class="dim-hero-video" muted loop playsinline preload="none">
+    <source src="assets/clip/OSTP-DIM08.mp4" type="video/mp4">
+  </video>
+  <img class="fallback-img" src="assets/img/OSTP-DIM08.png" alt="Infraestructura Digital" aria-hidden="true">
+
+  <!-- HEADER -->
+  <header class="global-header">
+    <object type="image/svg+xml" data="assets/icon/logo-ostp-hex.svg" id="OFICIAL-LOGO" aria-label="OSTP Logo"></object>
+    <nav aria-label="Navegación principal">
+      <a href="service.html" class="nav-link">← Catálogo</a>
+      <a href="index.html" class="nav-link">Explorar</a>
+    </nav>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="dim-card-container" id="dim-root">
+    
+    <!-- Badge + Ícono Hexágono -->
+    <div class="dim-header-with-hex">
+      <div class="dim-hex" id="dimHex-08" onclick="toggleHex(this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+        <div class="hex-glow"></div>
+        <span class="hex-label">DIM 08</span>
+      </div>
+      <div>
+        <span class="badge">DIM 08</span>
+      </div>
+    </div>
+
+    <!-- Título con efecto glitch -->
+    <h1 class="dim-title glitch" id="dim-title" data-text="Infraestructura Digital">Infraestructura Digital</h1>
+
+    <!-- Subtítulo -->
+    <p class="dim-subtitle" id="dim-subtitle">Hosting profesional y despliegue continuo para máxima disponibilidad.</p>
+
+    <!-- Grid de contenido -->
+    <section class="dim-content-grid">
+
+      <!-- Descripción -->
+      <div class="dim-section">
+        <h2 class="dim-section-title">Descripción</h2>
+        <p class="dim-description" id="dim-desc">Hosting profesional y despliegue continuo para máxima disponibilidad.</p>
+      </div>
+
+      <!-- Features -->
+      <div class="dim-section">
+        <h2 class="dim-section-title">Incluye</h2>
+        <ul class="feature-list" id="dim-features">
+          <li class='feature-item'><span class='feature-check'>✓</span> CI/CD con GitHub Actions</li>
+          <li class='feature-item'><span class='feature-check'>✓</span> Acceso remoto SkySysKit seguro</li>
+          <li class='feature-item'><span class='feature-check'>✓</span> Gestión de dominios y DNS</li>
+          <li class='feature-item'><span class='feature-check'>✓</span> Despliegue automatizado</li>
+          <li class='feature-item'><span class='feature-check'>✓</span> Monitoreo 24/7</li>
+          <li class='feature-item'><span class='feature-check'>✓</span> Backups automáticos diarios</li>
+          <li class='feature-item'><span class='feature-check'>✓</span> Escalabilidad automática</li>
+          <li class='feature-item'><span class='feature-check'>✓</span> Soporte técnico prioritario</li>
+        </ul>
+      </div>
+
+      <!-- Pricing & Delivery -->
+      <div class="dim-section dim-section--highlight">
+        <div class="pricing-box">
+          <span class="pricing-label">Inversión</span>
+          <span class="pricing-amount" id="dim-price">Desde $3,500 MXN/mes o $35,000 MXN/año (2 meses gratis)</span>
+        </div>
+        <div class="delivery-box">
+          <span class="delivery-label">Entrega</span>
+          <span class="delivery-time" id="dim-delivery">1 semana</span>
+        </div>
+      </div>
+
+      <!-- Garantía -->
+      <div class="dim-section">
+        <div class="guarantee-box">
+          <span class="guarantee-icon">✓</span>
+          <p class="guarantee-text" id="dim-guarantee"><strong>Garantía OSTP:</strong> 99.9% uptime o crédito del 20% en el siguiente mes.</p>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- CTA -->
+    <div class="dim-cta-wrapper">
+      <a href="flow/form.html?dim=08" class="btn btn--primary" id="cta-agendar">
+        <i class="fas fa-calendar-check" aria-hidden="true"></i> Agendar diagnóstico
+      </a>
+      <p class="cta-hint">Responde <strong>"DIM08"</strong> para iniciar</p>
+    </div>
+
+    <!-- Hashtags -->
+    <div class="dim-tags">
+      <span class='tag'>#InfraestructuraDigital</span>
+      <span class='tag'>#CloudHosting</span>
+      <span class='tag'>#OSTP</span>
+      <span class='tag'>#echoShift</span>
+      <span class='tag'>#DevOps</span>
+      <span class='tag'>#CICD</span>
+    </div>
+
+  </main>
+
+  <!-- NAVEGACIÓN CONTEXTUAL -->
+  <nav class="dim-nav">
+    <a href="dim07.html" class="nav-link">← Anterior</a>
+    <span class="nav-link" style="color:var(--ostp-text-muted)">DIM 08 de 08</span>
+    <a href="service.html" class="nav-link nav-link--next">Catálogo →</a>
+  </nav>
+
+  <!-- SCRIPTS -->
+  <script src="../../assets/js/main.js" defer></script>
+  <script>
+    function toggleHex(el) {
+      // Remover expansión de otros hexágonos
+      document.querySelectorAll('.dim-hex').forEach(h => h.classList.remove('expanded'));
+      // Toggle en el actual
+      if (el.classList.contains('expanded')) {
+        el.classList.remove('expanded');
+      } else {
+        el.classList.add('expanded');
+        // Auto-colapsar después de 3 segundos
+        setTimeout(() => {
+          el.classList.remove('expanded');
+        }, 3000);
+      }
+    }
+  </script>
+</body>
+</html>
